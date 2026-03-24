@@ -1,0 +1,13 @@
+# Node.js/General
+node_modules/
+.env
+.DS_Store
+*.log
+npm-debug.log*
+.env.example
+#Local development files
+.vscode/
+apps/
+
+
+

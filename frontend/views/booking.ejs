@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Book Appointment - <%= service.name %></title>
+  <link rel="stylesheet" href="/css/services.css">
+  <link rel="stylesheet" href="/css/booking.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    /* Validation Styling - Clean Version */
+    .form-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+    
+    .error-text {
+      color: #e74c3c;
+      font-size: 14px;
+      margin-top: 5px;
+      display: none;
+    }
+    
+    .input-error {
+      border: 2px solid #e74c3c !important;
+      background-color: #fdf2f2 !important;
+    }
+    
+    .input-success {
+      border: 2px solid #27ae60 !important;
+      background-color: #f2fdf2 !important;
+    }
+  </style>
+</head>
+<body data-user-logged-in="<%= locals.user ? 'true' : 'false' %>">
+  <!-- Header -->
+  <header class="header">
+    <nav id="navbar" class="navbar">
+      <div class="nav-content">
+        <div class="logo"><a href="/"><i class="fa fa-paw"></i> PetVerse</a></div>
+        <div class="nav-icons">
+          <a href="/cart" class="icon-btn cart-icon" id="cartIcon">
+            <i class="fa fa-shopping-cart"></i>
+            <span class="cart-count" id="cartCount" style="display: none;">0</span>
+          </a>
+          <a href="/login" class="icon-btn"><i class="fa fa-user"></i></a>
+        </div>
+        <div class="search">
+          <input class="search-bar" type="text" placeholder="Search pets, products or services">
+          <button class="search-btn"><i class="fa fa-search"></i></button>
+        </div>
+        <button class="hamburger" id="hamburger">
+          <i class="fa fa-bars"></i>
+        </button>
+        <ul class="nav-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/pets">Pets</a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle">Products <i class="fa fa-angle-down"></i></a>
+            <ul class="dropdown-menu">
+              <li><a href="/products/petfood">Pet Food</a></li>
+              <li><a href="/products/toys">Toys</a></li>
+              <li><a href="/products/accessories">Accessories</a></li>
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle">Services <i class="fa fa-angle-down"></i></a>
+            <ul class="dropdown-menu">
+              <li><a href="/services">Services</a></li>
+              <li><a href="/mate">PetMate</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <div class="booking-container">
+    <div class="booking-wrapper">
+      <div class="booking-info">
+        <h1><%= service.name %></h1>
+        <div class="service-category"><%= service.serviceType %></div>
+        <p><strong>Description:</strong> <%= service.description %></p>
+        <p><strong>Price:</strong> ₹<%= service.rate %></p>
+        <p><strong>Location:</strong> <%= service.location %></p>
+        
+        <div class="availability-info">
+          <h3>Available Days</h3>
+          <p>Monday to Saturday, 9:00 AM - 6:00 PM</p>
+          <p>Closed on Sundays and public holidays</p>
+          <p>* Actual availability may vary based on provider's schedule</p>
+        </div>
+        
+        <div class="booking-instructions">
+          <h3>Booking Instructions</h3>
+          <ul>
+            <li>Select your preferred date</li>
+            <li>Choose an available time slot</li>
+            <li>Fill in your details</li>
+            <li>Confirm your booking</li>
+          </ul>
+          <p>Note: Slots are booked on a first-come, first-served basis.</p>
+        </div>
+      </div>
+
+      <div class="booking-form-container">
+        <% if (error) { %>
+          <div class="error-message">
+            <p><%= error %></p>
+          </div>
+        <% } %>
+        
+        <% if (confirmed === true) { %>
+          <div class="confirmation-message">
+            <h2>Booking Confirmed!</h2>
+            <div class="confirmation-details">
+              <p>Thank you, <strong><%= booking.name %></strong>!</p>
+              <p>Your appointment with <strong><%= service.name %></strong> is confirmed for:</p>
+              <div class="booking-details">
+                <p><i class="fas fa-calendar"></i> <strong>Date:</strong> <%= booking.date %></p>
+                <p><i class="fas fa-clock"></i> <strong>Time:</strong> <%= booking.slot %></p>
+              </div>
+              <p>A confirmation email has been sent to your registered email address.</p>
+              <a href="/services" class="back-link">Back to Services</a>
+            </div>
+          </div>
+        <% } else { %>
+          <h2>Book an Appointment</h2>
+          <form action="/booking" method="POST" class="booking-form" id="bookingForm" novalidate>
+            <input type="hidden" name="serviceId" value="<%= service._id %>">
+            
+            <div class="form-group">
+              <label for="datePicker"><i class="fas fa-calendar"></i> Select Date:</label>
+              <input type="date" id="datePicker" name="date" required>
+              <div class="error-text" id="dateErrorText"></div>
+            </div>
+            
+            <div class="form-group">
+              <label for="slotSelect"><i class="fas fa-clock"></i> Select Time:</label>
+              <select id="slotSelect" name="slot" required disabled>
+                <option value="">-- First select a date --</option>
+              </select>
+              <div id="no-slots" class="no-slots" style="display: none;">
+                No available slots for this date. Please select another date.
+              </div>
+              <div class="error-text" id="slotErrorText"></div>
+            </div>
+          
+            <button type="submit" class="book-now-btn" id="submitBtn">Confirm Booking</button>
+          </form>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <footer id="footer">
+    <div class="footer-container">
+      <div class="footer-logo">
+        <h2>PetVerse</h2>
+        <p>Your one-stop destination for all pet needs</p>
+      </div>
+      <div class="footer-links">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="/">About Us</a></li>
+          <li><a href="/products">Shop</a></li>
+          <li><a href="/services">Services</a></li>
+          <li><a href="/contact">Contact Us</a></li>
+        </ul>
+      </div>
+      <div class="footer-social">
+        <h3>Follow Us</h3>
+        <a href="https://facebook.com" target="_blank" class="social-icon">Facebook</a>
+        <a href="https://instagram.com" target="_blank" class="social-icon">Instagram</a>
+        <a href="https://twitter.com" target="_blank" class="social-icon">Twitter</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 PetVerse. All Rights Reserved</p>
+    </div>
+  </footer>
+
+  <script src="/js/Services.js"></script>
+  <script src="/js/booking-validation.js"></script>
+</body>
+</html>

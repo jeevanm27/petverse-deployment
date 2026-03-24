@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetVerse - <%= product.title || product.name %></title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <link rel="stylesheet" href="/css/Buy.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        
+    </style>
+</head>
+<body>
+    <!-- Hidden element to store product data -->
+    <div id="productData" data-product='<%= JSON.stringify(product) %>' style="display: none;"></div>
+    
+    <% if (locals.user) { %>
+    <!-- Hidden element to store user data -->
+    <div id="userData" data-user-id="<%= user._id %>" style="display: none;"></div>
+    <% } %>
+    </div>
+    <%- include('partials/header') %>
+
+    <!-- Main Content -->
+    <div class="product-page">
+    <div class="container">
+        <!-- Product Section -->
+        <div class="product-layout">
+            <div class="product-images">
+                <div class="main-image">
+                    <% if (product.images && product.images.length > 0) { %>
+                        <img src="data:<%= product.images[0].contentType %>;base64,<%= product.images[0].data.toString('base64') %>" 
+                             alt="<%= product.title || product.name %>">
+                    <% } else { %>
+                        <img src="/images/default-product.jpg" alt="<%= product.title || product.name %>">
+                    <% } %>
+                </div>
+            </div>
+
+            <div class="product-info">
+                <h1><%= product.title || product.name %></h1>
+                
+                <div class="rating" onclick="document.getElementById('reviews').scrollIntoView({behavior: 'smooth'})">
+                    <div class="stars">
+                        <% for(let i = 0; i < 5; i++) { %>
+                            <% if (i < Math.floor(productRating)) { %>
+                                <i class="fa fa-star"></i>
+                            <% } else if (i === Math.floor(productRating) && productRating % 1 !== 0) { %>
+                                <i class="fa fa-star-half-o"></i>
+                            <% } else { %>
+                                <i class="fa fa-star-o"></i>
+                            <% } %>
+                        <% } %>
+                    </div>
+                    <span class="rating-text"><%= productRating %> (<%= reviewCount %> reviews)</span>
+                </div>
+
+                <div class="price">₹ <%= product.price.toLocaleString() %></div>
+
+                <div class="stock-info">
+                    <% if (product.stock > 0) { %>
+                        <i class="fa fa-check-circle"></i>
+                        <span>In Stock</span>
+                    <% } else { %>
+                        <i class="fa fa-times-circle" style="color: #ef4444;"></i>
+                        <span style="color: #ef4444;">Out of Stock</span>
+                    <% } %>
+                </div>
+
+                <div class="delivery-info">
+                    <div><i class="fa fa-truck"></i><strong>Free Delivery</strong></div>
+                    <div style="margin-top: 0.5rem; color: #666;">Estimated delivery: 2-4 days</div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-cart add-to-cart-btn">
+                        <i class="fa fa-shopping-cart"></i> Add to Cart
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    
+
+        <!-- Product Details -->
+        <div class="details-section">
+            <h2 class="section-title">Product Details</h2>
+            <div class="details-grid">
+                <% if (product.brand) { %>
+                    <div class="detail-item"><strong>Brand:</strong> <%= product.brand %></div>
+                <% } %>
+                <% if (product.category) { %>
+                    <div class="detail-item"><strong>Category:</strong> <%= product.category %></div>
+                <% } %>
+            </div>
+            <% if (product.description) { %>
+                <div class="detail-item" style="margin-top: 1rem;">
+                    <strong>Description:</strong> <%= product.description %>
+                </div>
+            <% } %>
+            <% if (product.tags && product.tags.length > 0) { %>
+                <div class="detail-item" style="margin-top: 1rem;">
+                    <strong>Tags:</strong> <%= product.tags.join(', ') %>
+                </div>
+            <% } %>
+            <% if (seller) { %>
+                <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #eee;">
+                    <div class="detail-item"><strong>Seller:</strong> <%= seller.businessName %></div>
+                    <div class="detail-item"><strong>Rating:</strong> <%= seller.rating ? seller.rating + ' / 5' : '4.5 / 5' %></div>
+                    <div class="detail-item"><strong>Contact:</strong> <%= seller.email + ' | ' + seller.phone %></div>
+                </div>
+            <% } %>
+        </div>
+
+        <!-- Reviews Section -->
+        <div class="details-section" id="reviews">
+            <h2 class="section-title">Reviews</h2>
+            <div class="reviews-layout">
+                <!-- Rating Form -->
+                <div class="rating-form">
+                    <h3>Rate this Product</h3>
+                    <div class="star-rating">
+                        <span class="star" data-value="1">★</span>
+                        <span class="star" data-value="2">★</span>
+                        <span class="star" data-value="3">★</span>
+                        <span class="star" data-value="4">★</span>
+                        <span class="star" data-value="5">★</span>
+                    </div>
+                    <input type="hidden" id="rating-value" value="0">
+                    <textarea id="feedback" rows="5" placeholder="Write your feedback..."></textarea>
+                    
+                    <form action="/submit-review" method="post" id="review-form">
+                        <input type="hidden" name="productId" value="<%= product._id %>">
+                        <input type="hidden" name="rating" id="form-rating-value" value="">
+                        <input type="hidden" name="comment" id="form-comment-value" value="">
+                        <button type="button" id="submit-review" class="submit-btn">Submit Review</button>
+                    </form>
+                </div>
+
+                <!-- Review List -->
+                <div class="review-list">
+                    <h3>Customer Reviews</h3>
+                    <% if (locals.reviews && reviews.length > 0) { %>
+                        <% reviews.forEach(function(review) { %>
+                            <div class="review">
+                                <div class="review-header">
+                                    <strong><%= review.user ? (review.user.username || review.user.firstName || 'Anonymous') : 'Anonymous' %></strong>
+                                    <div class="review-stars">
+                                        <% for (let i = 0; i < 5; i++) { %>
+                                            <% if (i < review.rating) { %>
+                                                <span class="star" style="color: #FFD700;">★</span>
+                                            <% } else { %>
+                                                <span class="star" style="color: #ddd;">★</span>
+                                            <% } %>
+                                        <% } %>
+                                    </div>
+                                    <span class="review-date"><%= new Date(review.createdAt).toLocaleDateString() %></span>
+                                </div>
+                                <p class="review-text"><%= review.comment || '' %></p>
+                            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <p style="color: #999;">No reviews yet. Be the first to review this product!</p>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Similar Products Section -->
+        <% if (locals.similarProducts && similarProducts.length > 0) { %>
+        <div class="details-section">
+            <h2 class="section-title">Similar Products</h2>
+            <div class="similar-products-grid">
+                <% similarProducts.forEach(function(similarProduct) { %>
+                    <div class="product-card">
+                        <a href="/buy/<%= similarProduct._id %>" class="product-link">
+                            <div class="product-image">
+                                <% if (similarProduct.images && similarProduct.images.length > 0) { %>
+                                    <img src="data:<%= similarProduct.images[0].contentType %>;base64,<%= similarProduct.images[0].data.toString('base64') %>" alt="<%= similarProduct.name %>">
+                                <% } else { %>
+                                    <img src="/images/default-product.jpg" alt="<%= similarProduct.name %>">
+                                <% } %>
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name"><%= similarProduct.name %></h3>
+                                <p class="product-brand"><%= similarProduct.brand %></p>
+                                <div class="product-rating">
+                                    <div class="stars">
+                                        <% for(let i = 1; i <= 5; i++) { %>
+                                            <i class="fa fa-star <%= i <= similarProduct.avgRating ? 'filled' : '' %>" style="<%= i <= similarProduct.avgRating ? 'color: #FFD700;' : 'color: #ddd;' %>"></i>
+                                        <% } %>
+                                    </div>
+                                    <span class="review-count">(<%= similarProduct.reviewCount || 0 %>)</span>
+                                </div>
+                                <p class="product-description"><%= similarProduct.description %></p>
+                                <div class="product-price">
+                                    <% if (similarProduct.discount > 0) { %>
+                                        <span class="original-price">₹<%= similarProduct.price.toFixed(2) %></span>
+                                        <span class="discounted-price">₹<%= (similarProduct.price * (1 - similarProduct.discount/100)).toFixed(2) %></span>
+                                        <span class="discount-badge"><%= similarProduct.discount %>% OFF</span>
+                                    <% } else { %>
+                                        <span class="discounted-price">₹<%= similarProduct.price.toFixed(2) %></span>
+                                    <% } %>
+                                </div>
+                                <div class="product-stock">
+                                    <% if (similarProduct.stock === 0) { %>
+                                        Out of Stock
+                                    <% } else if (similarProduct.stock <= 5) { %>
+                                        Only <%= similarProduct.stock %> left in stock!
+                                    <% } else { %>
+                                        In Stock
+                                    <% } %>
+                                </div>
+                            </div>
+                        </a>
+                        <div class="product-action">
+                            <button class="add-to-cart-similar" data-product-id="<%= similarProduct._id %>" <%= similarProduct.stock === 0 ? 'disabled' : '' %>>
+                                Add to Cart
+                            </button>
+                            <button class="wishlist-btn">
+                                <i class="far fa-heart"></i>
+                            </button>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+        <% } %>
+    </div>
+
+    <%- include('partials/footer') %>
+    
+    <script src="/js/script.js"></script>
+    <script src="/js/cart-manager.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize cart manager
+            cartManager.initializeCart();
+            
+            // Load and initialize wishlist state
+            loadWishlistState();
+            
+            // Add to Cart Button
+            const addToCartBtn = document.querySelector('.add-to-cart-btn');
+            if (addToCartBtn) {
+                addToCartBtn.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    
+                    if (this.disabled) return;
+                    
+                    const productData = document.getElementById('productData');
+                    if (productData) {
+                        const product = JSON.parse(productData.getAttribute('data-product'));
+                        if (product && product._id) {
+                            try {
+                                this.disabled = true;
+                                const originalText = this.innerHTML;
+                                this.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Adding...';
+                                
+                                const result = await cartManager.addToCart(product._id, 1);
+                                if (result.success) {
+                                    this.innerHTML = '<i class="fa fa-check"></i> Added to Cart!';
+                                    this.style.backgroundColor = "#4CAF50";
+                                    setTimeout(() => {
+                                        window.location.href = '/cart';
+                                    }, 800);
+                                }
+                            } catch (error) {
+                                console.error('Failed to add to cart:', error);
+                                this.innerHTML = '<i class="fa fa-times"></i> Failed to Add';
+                                this.style.backgroundColor = "#dc3545";
+                                
+                                setTimeout(() => {
+                                    this.disabled = false;
+                                    this.innerHTML = originalText;
+                                    this.style.backgroundColor = "";
+                                }, 1500);
+                                
+                                alert(error.message || 'Failed to add item to cart');
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Star Rating System
+            const stars = document.querySelectorAll('.star');
+            const ratingInput = document.getElementById('rating-value');
+
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    const value = parseInt(this.getAttribute('data-value'));
+                    ratingInput.value = value;
+                    updateStars(value);
+                });
+
+                star.addEventListener('mouseover', function() {
+                    hoverStars(parseInt(this.getAttribute('data-value')));
+                });
+
+                star.addEventListener('mouseout', function() {
+                    updateStars(parseInt(ratingInput.value) || 0);
+                });
+            });
+
+            function updateStars(rating) {
+                stars.forEach(star => {
+                    const value = parseInt(star.getAttribute('data-value'));
+                    if (value <= rating) {
+                        star.classList.add('selected');
+                        star.style.color = '#FFD700';
+                    } else {
+                        star.classList.remove('selected');
+                        star.style.color = '#ddd';
+                    }
+                });
+            }
+
+            function hoverStars(rating) {
+                stars.forEach(star => {
+                    const value = parseInt(star.getAttribute('data-value'));
+                    star.style.color = (value <= rating) ? '#FFD700' : '#ddd';
+                });
+            }
+
+            // Submit Review
+            document.getElementById('submit-review').addEventListener('click', function() {
+                const rating = parseInt(ratingInput.value);
+                if (!rating) {
+                    alert('Please select a star rating before submitting');
+                    return;
+                }
+                const feedback = document.getElementById('feedback').value;
+                document.getElementById('form-rating-value').value = rating;
+                document.getElementById('form-comment-value').value = feedback;
+                document.getElementById('review-form').submit();
+            });
+
+            // Similar Products - Add to Cart
+            const similarAddToCartBtns = document.querySelectorAll('.add-to-cart-similar');
+            similarAddToCartBtns.forEach(btn => {
+                btn.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    
+                    if (this.disabled) return;
+                    
+                    const productId = this.getAttribute('data-product-id');
+                    if (productId) {
+                        try {
+                            this.disabled = true;
+                            const originalText = this.innerHTML;
+                            this.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Adding...';
+                            
+                            const result = await cartManager.addToCart(productId, 1);
+                            if (result.success) {
+                                this.innerHTML = '<i class="fa fa-check"></i> Added!';
+                                this.style.backgroundColor = "#4CAF50";
+                                setTimeout(() => {
+                                    this.disabled = false;
+                                    this.innerHTML = originalText;
+                                    this.style.backgroundColor = "";
+                                }, 2000);
+                            }
+                        } catch (error) {
+                            console.error('Failed to add to cart:', error);
+                            this.innerHTML = '<i class="fa fa-times"></i> Failed';
+                            this.style.backgroundColor = "#dc3545";
+                            
+                            setTimeout(() => {
+                                this.disabled = false;
+                                this.innerHTML = originalText;
+                                this.style.backgroundColor = "";
+                            }, 1500);
+                        }
+                    }
+                });
+            });
+
+            // Function to load wishlist state from backend
+            async function loadWishlistState() {
+                try {
+                    const response = await fetch('/wishlist');
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        const wishlistedProductIds = data.wishlistedProducts.map(p => p._id.toString());
+                        
+                        // Update all wishlist buttons based on backend data
+                        document.querySelectorAll('.similar-products-grid .wishlist-btn').forEach(btn => {
+                            const productCard = btn.closest('.product-card');
+                            const addToCartBtn = productCard.querySelector('.add-to-cart-similar');
+                            const productId = addToCartBtn ? addToCartBtn.getAttribute('data-product-id') : null;
+                            
+                            if (productId && wishlistedProductIds.includes(productId)) {
+                                // Product is in wishlist - show filled heart
+                                const heartIcon = btn.querySelector('i');
+                                heartIcon.classList.remove('far');
+                                heartIcon.classList.add('fas');
+                            }
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error loading wishlist state:', error);
+                }
+            }
+
+            // Similar Products - Wishlist functionality with async/fetch
+            const similarWishlistBtns = document.querySelectorAll('.similar-products-grid .wishlist-btn');
+            similarWishlistBtns.forEach(btn => {
+                btn.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    
+                    // Get product ID from the sibling button
+                    const productCard = this.closest('.product-card');
+                    const addToCartBtn = productCard.querySelector('.add-to-cart-similar');
+                    const productId = addToCartBtn ? addToCartBtn.getAttribute('data-product-id') : null;
+                    
+                    if (!productId) {
+                        console.error('Product ID not found');
+                        return;
+                    }
+                    
+                    // Toggle heart icon immediately for better UX
+                    const heartIcon = this.querySelector('i');
+                    const wasWishlisted = heartIcon.classList.contains('fas');
+                    
+                    heartIcon.classList.toggle('far');
+                    heartIcon.classList.toggle('fas');
+                    
+                    // Send request to backend
+                    try {
+                        const response = await fetch(`/wishlist/product/${productId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            // Show feedback
+                            if (data.wishlisted) {
+                                console.log('Added to wishlist');
+                                // Optional: Show a toast notification
+                            } else {
+                                console.log('Removed from wishlist');
+                            }
+                        } else {
+                            // Revert the icon if API call failed
+                            heartIcon.classList.toggle('far');
+                            heartIcon.classList.toggle('fas');
+                            console.error('Failed to update wishlist:', data.message);
+                        }
+                    } catch (error) {
+                        // Revert the icon if request failed
+                        heartIcon.classList.toggle('far');
+                        heartIcon.classList.toggle('fas');
+                        console.error('Error updating wishlist:', error);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

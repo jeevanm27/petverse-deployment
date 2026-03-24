@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetVerse - Find a Mate</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="/css/mate.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        /* Cart count style */
+        .cart-icon {
+            position: relative;
+        }
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #ff6b6b;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .filter-btns {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            gap: 10px;
+        }
+        #clrfltr{
+            background-color: #ff4c4c;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        #clrfltr:hover {
+            background-color: #f98787;
+        }
+        .petmate-disclaimer {
+            background-color: #fef0be; /* light yellow */
+            color: #795b00; /* dark yellow/brown */
+            border: 1px solid #ebbd35;
+            padding: 12px 20px;
+            margin: -20px 50px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+        .petmate-disclaimer p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/header') %>
+    <br>
+    <!-- Main Content -->
+    <div class="petmate-disclaimer">
+                    <p>
+                        ⚠️ Disclaimer: PetVerse provides this platform to connect pet owners and registered breeders. 
+                        We do not guarantee the health, behavior, or safety of pets listed. 
+                        Users should exercise caution and follow local regulations when arranging meetups or bookings.
+                    </p>
+                </div>
+    <div class="main-container">
+        <!-- Filters Sidebar -->
+         <div class="filters-sidebar">
+            <h2>Find the Perfect Match</h2>
+            
+            <!-- Pet Type Filter -->
+            <div class="filter-section">
+                <h3>Pet Type</h3>
+                <div class="filter-options">
+                    <% petTypes.forEach(type => { %>
+                        <div class="filter-option">
+                            <input type="checkbox" id="type-<%= type.value %>" name="petType" value="<%= type.value %>">
+                            <label for="type-<%= type.value %>"><%= type.label %></label>
+                        </div>
+                    <% }); %>
+                </div>
+            </div>
+            
+            <!-- Gender Filter -->
+            <div class="filter-section">
+                <h3>Gender</h3>
+                <div class="filter-options">
+                    <div class="filter-option">
+                        <input type="checkbox" id="gender-male" name="gender" value="male">
+                        <label for="gender-male">Male</label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" id="gender-female" name="gender" value="female">
+                        <label for="gender-female">Female</label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Breed Filter -->
+            <div class="filter-section">
+                <h3>Breed</h3>
+                <div class="filter-options">
+                    <% breeds.forEach(breed => { %>
+                        <div class="filter-option">
+                            <input type="checkbox" id="breed-<%= breed.value %>" name="breed" value="<%= breed.value %>">
+                            <label for="breed-<%= breed.value %>"><%= breed.label %></label>
+                        </div>
+                    <% }); %>
+                </div>
+            </div>
+            
+            <!-- Age Filter -->
+            <div class="filter-section">
+                <h3>Age</h3>
+                <div class="filter-options">
+                    <div class="filter-option">
+                        <input type="checkbox" id="age-puppy" name="age" value="puppy">
+                        <label for="age-puppy">Less than 1 year</label>
+                    </div>
+                    <!-- ... other age options ... -->
+                </div>
+            </div>
+            
+            <!-- Location Filter - State -->
+            <div class="filter-section">
+                <h3>State</h3>
+                <div class="filter-options">
+                    <select id="state-filter" name="state">
+                        <option value="">Select State</option>
+                        <% states.forEach(state => { %>
+                            <option value="<%= state.value %>">
+                                <%= state.label %>
+                            </option>
+                        <% }); %>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Location Filter - District -->
+            <div class="filter-section">
+                <h3>District</h3>
+                <div class="filter-options">
+                    <input type="text" id="district-filter" name="district" 
+                        placeholder="Enter district name" value="">
+                </div>
+            </div>
+            
+            <div class="filter-btns">
+                <button id="clear-all-filters" class="filter-btn clear-btn" style="background-color: #ff4c4c; color: white; width: 100%; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Clear All Filters</button>
+            </div>
+            
+        </div>
+
+
+        <!-- Pets Display Area -->
+        <div class="pets-container">
+            <div class="pets-header">
+
+                <h1>Pet Mating Listings</h1>
+                <select class="sort-dropdown">
+                    <option value="recent">Most Recent</option>
+                    <option value="age-young">Age: Youngest First</option>
+                    <option value="age-old">Age: Oldest First</option>
+                    <option value="location">Nearest Location</option>
+                </select>
+            </div>
+
+            <!-- Pets Grid -->
+            <div class="pets-grid">
+                <% pets.forEach(pet => { %>
+                    <a href="/services/breeders">
+                        <div class="pet-card">
+                        <div class="pet-image">
+                            <% if(pet.images && pet.images.length > 0) { %>
+                                <img src="data:<%= pet.images[0].contentType %>;base64,<%= pet.images[0].data.toString('base64') %>" 
+                                     alt="<%= pet.name %>">
+                            <% } else { %>
+                                <img src="/images/default-pet.jpg" alt="Default pet image">
+                            <% } %>
+                            <div class="pet-badge <%= pet.gender === 'male' ? 'male' : 'female' %>">
+                                <i class="fas <%= pet.gender === 'male' ? 'fa-mars' : 'fa-venus' %>"></i>
+                            </div>
+                        </div>
+                        <div class="pet-info">
+                            <h3 class="pet-name"><%= pet.name %></h3>
+                            <div class="pet-details">
+                                <p><i class="fas fa-paw"></i> <strong>Breed:</strong> <%= pet.breed %></p>
+                                <p><i class="fas fa-birthday-cake"></i> <strong>Age:</strong> 
+                                    <%= pet.age.value %> <%= pet.age.unit %></p>
+                                <p><i class="fas fa-map-marker-alt"></i> <strong>Location:</strong> 
+                                    <%= pet.location.district %>, <%= pet.location.state %></p>
+                                <p><i class="fas fa-phone"></i> <strong>Contact:</strong> 
+                                    <%= pet.contact.phone %></p>
+                                <p><i class="fas fa-envelope"></i> <strong>Email:</strong> 
+                                    <%= pet.contact.email %></p>
+                                <% if (pet.description) { %>
+                                    <p class="pet-description"><i class="fas fa-info-circle"></i> <%= pet.description %></p>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                    </a>
+                <% }); %>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="mate-submission-section">
+        <div class="submission-header">
+            <h2><i class="fa fa-heart"></i> List Your Pet for Mating</h2>
+            <p>Help your pet find the perfect match in the PetVerse community</p>
+        </div>
+        
+        <form class="mate-submission-form" action="/pets/mate/add" method="post" enctype="multipart/form-data">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="pet-name">Pet Name <span class="required">*</span></label>
+                    <input type="text" id="pet-name" name="petName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="pet-type">Pet Type <span class="required">*</span></label>
+                    <select id="pet-type" name="petType" required>
+                        <option value="">Select Pet Type</option>
+                        <option value="dog">Dog</option>
+                        <option value="cat">Cat</option>
+                        <option value="bird">Bird</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group"> <label for="pet-breed">Breed <span class="required">*</span></label> <input type="text" id="pet-breed" name="breed" required> </div>
+                
+                <div class="form-group">
+    <label for="pet-age-value">Age <span class="required">*</span></label>
+    <div style="display: flex; gap: 10px;">
+        <input type="number" 
+               id="pet-age-value" 
+               name="ageValue" 
+               placeholder="Enter age" 
+               min="0" 
+               step="0.1" 
+               required
+               style="flex: 2;">
+        <select id="pet-age-unit" 
+                name="ageUnit" 
+                required
+                style="flex: 1;">
+            <option value="">Unit</option>
+            <option value="months">Months</option>
+            <option value="years">Years</option>
+        </select>
+    </div>
+</div>
+                
+                <div class="form-group"> <label>Gender <span class="required">*</span></label> <div class="radio-group"> <input type="radio" id="male" name="gender" value="male" required> <label for="male">Male</label> <input type="radio" id="female" name="gender" value="female"> <label for="female">Female</label> </div> </div>
+
+                <div class="form-group">
+                    <label for="pet-registration">Registration Number (if any)</label>
+                    <input type="text" id="pet-registration" name="registrationNumber">
+                </div>
+                
+                <div class="form-group">
+                    <label for="state">State <span class="required">*</span></label>
+                    <select id="state" name="state" required>
+                        <option value="">Select State</option>
+                        <option value="andhra-pradesh">Andhra Pradesh</option>
+                        <option value="kerala">Kerala</option>
+                        <option value="karnataka">Karnataka</option>
+                        <option value="tamil-nadu">Tamil Nadu</option>
+                        <option value="telangana">Telangana</option>
+                        <!-- Add more states as needed -->
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="district">District <span class="required">*</span></label>
+                    <input type="text" id="district" name="district" required>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label for="pet-description">Description <span class="required">*</span></label>
+                    <textarea id="pet-description" name="description" rows="4" placeholder="Describe your pet's personality, health, past breeding history, and any specific preferences for a mate." required></textarea>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label for="pet-image">Upload Pet Images <span class="required">*</span></label>
+                    <div class="image-upload-container">
+                        <input type="file" id="pet-image" name="petImage" accept="image/*" multiple required>
+                        <label for="pet-image" class="image-upload-label">
+                            <i class="fas fa-cloud-upload-alt"></i> Choose Files
+                        </label>
+                        <span class="file-info">No files chosen (Max 4 images)</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="owner-contact">Contact Number <span class="required">*</span></label>
+                    <input type="tel" id="owner-contact" name="contactNumber" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="owner-email">Email <span class="required">*</span></label>
+                    <input type="email" id="owner-email" name="email" required>
+                </div>
+                
+                <div class="form-group full-width">
+                    <div class="terms-container">
+                        <input type="checkbox" id="health-check" name="healthCheck" required>
+                        <label for="health-check">I confirm my pet is healthy and has all necessary vaccinations <span class="required">*</span></label>
+                    </div>
+                </div>
+                
+                <div class="form-group full-width">
+                    <div class="terms-container">
+                        <input type="checkbox" id="terms" name="terms" required>
+                        <label for="terms">I agree to PetVerse's <a href="/terms">Terms & Conditions</a> <span class="required">*</span></label>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit" class="submit-mate-btn">List Your Pet for Mating</button>
+        </form>
+    </div>
+
+    <footer id="footer">
+        <div class="footer-container">
+            <div class="footer-logo">
+                <h2>PetVerse</h2>
+                <p>Your one-stop destination for all pet needs</p>
+            </div>
+            <div class="footer-links">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Shop</a></li>
+                    <li><a href="#">Services</a></li>
+                    <li><a href="#">Events</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-social">
+                <h3>Follow Us</h3>
+                <a href="https://facebook.com" target="_blank" class="social-icon">Facebook</a>
+                <a href="https://instagram.com" target="_blank" class="social-icon">Instagram</a>
+                <a href="https://twitter.com" target="_blank" class="social-icon">Twitter</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 PetVerse. All Rights Reversed</p>
+        </div>
+      </footer>
+
+    <script src="/js/script.js"></script>
+    <script src="/js/cart-manager.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeCart();
+            initializeFormValidation();
+            initializeFilters();
+            initializeNavigation();
+            handleUrlMessages();
+        });
+
+        function initializeCart() {
+            if (typeof cartManager !== 'undefined') {
+                cartManager.initializeCart();
+            } else {
+                fetch('/cart/count')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const cartCount = document.getElementById('cartCount');
+                            if (cartCount) {
+                                cartCount.textContent = data.cartCount;
+                                cartCount.style.display = data.cartCount > 0 ? 'inline-block' : 'none';
+                            }
+                        }
+                    })
+                    .catch(error => console.error('Error fetching cart count:', error));
+            }
+        }
+
+        function initializeFormValidation() {
+            const mateForm = document.querySelector('.mate-submission-form');
+            if (!mateForm) return;
+
+            // Phone number validation
+            const phoneInput = document.getElementById('owner-contact');
+            if (phoneInput) {
+                phoneInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    
+                    if (value.length > 10) {
+                        value = value.slice(0, 10);
+                    }
+                    
+                    e.target.value = value;
+                    
+                    if (value.length === 10) {
+                        e.target.setCustomValidity('');
+                        e.target.classList.remove('invalid');
+                        e.target.classList.add('valid');
+                    } else if (value.length > 0) {
+                        e.target.setCustomValidity('Phone number must be 10 digits');
+                        e.target.classList.add('invalid');
+                        e.target.classList.remove('valid');
+                    } else {
+                        e.target.setCustomValidity('');
+                        e.target.classList.remove('invalid', 'valid');
+                    }
+                });
+            }
+
+            // Email validation
+            const emailInput = document.getElementById('owner-email');
+            if (emailInput) {
+                emailInput.addEventListener('blur', function(e) {
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (e.target.value && !emailRegex.test(e.target.value)) {
+                        e.target.setCustomValidity('Please enter a valid email address');
+                        e.target.classList.add('invalid');
+                        e.target.classList.remove('valid');
+                    } else if (e.target.value) {
+                        e.target.setCustomValidity('');
+                        e.target.classList.remove('invalid');
+                        e.target.classList.add('valid');
+                    }
+                });
+            }
+
+            // Pet name validation
+            const petNameInput = document.getElementById('pet-name');
+            if (petNameInput) {
+                petNameInput.addEventListener('input', function(e) {
+                    const nameRegex = /^[a-zA-Z\s-]*$/;
+                    if (!nameRegex.test(e.target.value)) {
+                        e.target.value = e.target.value.replace(/[^a-zA-Z\s-]/g, '');
+                    }
+                    
+                    if (e.target.value.length > 0 && e.target.value.length < 2) {
+                        e.target.setCustomValidity('Pet name must be at least 2 characters');
+                        e.target.classList.add('invalid');
+                    } else if (e.target.value.length > 30) {
+                        e.target.setCustomValidity('Pet name must be less than 30 characters');
+                        e.target.classList.add('invalid');
+                    } else {
+                        e.target.setCustomValidity('');
+                        e.target.classList.remove('invalid');
+                        if (e.target.value.length >= 2) {
+                            e.target.classList.add('valid');
+                        }
+                    }
+                });
+            }
+
+            // Age validation
+            const ageValueInput = document.getElementById('pet-age-value');
+            const ageUnitSelect = document.getElementById('pet-age-unit');
+            
+            function validateAge() {
+                if (!ageValueInput || !ageUnitSelect) return;
+                
+                const value = parseFloat(ageValueInput.value);
+                const unit = ageUnitSelect.value;
+                
+                if (!value || !unit) return;
+                
+                let isValid = true;
+                let message = '';
+                
+                if (value <= 0) {
+                    isValid = false;
+                    message = 'Age must be greater than 0';
+                } else if (unit === 'months' && value > 120) {
+                    isValid = false;
+                    message = 'Maximum age is 120 months (10 years)';
+                } else if (unit === 'years' && value > 30) {
+                    isValid = false;
+                    message = 'Maximum age is 30 years';
+                } else if (unit === 'months' && value < 1) {
+                    isValid = false;
+                    message = 'Minimum age is 1 month';
+                }
+                
+                if (!isValid) {
+                    ageValueInput.setCustomValidity(message);
+                    ageValueInput.classList.add('invalid');
+                    ageValueInput.classList.remove('valid');
+                } else {
+                    ageValueInput.setCustomValidity('');
+                    ageValueInput.classList.remove('invalid');
+                    ageValueInput.classList.add('valid');
+                }
+            }
+            
+            if (ageValueInput) ageValueInput.addEventListener('input', validateAge);
+            if (ageUnitSelect) ageUnitSelect.addEventListener('change', validateAge);
+
+            // District validation
+            const districtInput = document.getElementById('district');
+            if (districtInput) {
+                districtInput.addEventListener('input', function(e) {
+                    const districtRegex = /^[a-zA-Z\s-]*$/;
+                    if (!districtRegex.test(e.target.value)) {
+                        e.target.value = e.target.value.replace(/[^a-zA-Z\s-]/g, '');
+                    }
+                    
+                    if (e.target.value.length > 0 && e.target.value.length < 2) {
+                        e.target.setCustomValidity('District name must be at least 2 characters');
+                        e.target.classList.add('invalid');
+                    } else {
+                        e.target.setCustomValidity('');
+                        e.target.classList.remove('invalid');
+                        if (e.target.value.length >= 2) {
+                            e.target.classList.add('valid');
+                        }
+                    }
+                });
+            }
+
+            // File upload validation
+            const fileInput = document.getElementById('pet-image');
+            const fileInfo = document.querySelector('.file-info');
+            
+            if (fileInput && fileInfo) {
+                fileInput.addEventListener('change', function(e) {
+                    const files = e.target.files;
+                    let errorMessage = '';
+                    
+                    if (files.length > 4) {
+                        errorMessage = 'Maximum 4 images allowed';
+                        e.target.value = '';
+                        fileInfo.textContent = errorMessage;
+                        fileInfo.style.color = '#f44336';
+                        return;
+                    }
+                    
+                    const maxSize = 5 * 1024 * 1024; // 5MB
+                    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+                    
+                    for (let i = 0; i < files.length; i++) {
+                        const file = files[i];
+                        
+                        if (!allowedTypes.includes(file.type)) {
+                            errorMessage = `${file.name} is not a valid image format. Use JPG, PNG, or WebP.`;
+                            break;
+                        }
+                        
+                        if (file.size > maxSize) {
+                            errorMessage = `${file.name} is too large. Maximum size is 5MB.`;
+                            break;
+                        }
+                    }
+                    
+                    if (errorMessage) {
+                        e.target.value = '';
+                        fileInfo.textContent = errorMessage;
+                        fileInfo.style.color = '#f44336';
+                        e.target.setCustomValidity(errorMessage);
+                    } else {
+                        const totalSize = Array.from(files).reduce((sum, file) => sum + file.size, 0);
+                        const totalSizeMB = (totalSize / (1024 * 1024)).toFixed(2);
+                        fileInfo.textContent = `${files.length} file(s) selected (${totalSizeMB} MB)`;
+                        fileInfo.style.color = '#4CAF50';
+                        e.target.setCustomValidity('');
+                    }
+                });
+            }
+
+            // Description character count
+            const descriptionTextarea = document.getElementById('pet-description');
+            if (descriptionTextarea) {
+                const maxChars = 500;
+                const counterDiv = document.createElement('div');
+                counterDiv.className = 'char-counter';
+                counterDiv.style.cssText = 'font-size: 0.9rem; color: #666; margin-top: 5px;';
+                descriptionTextarea.parentNode.appendChild(counterDiv);
+                
+                descriptionTextarea.addEventListener('input', function(e) {
+                    const length = e.target.value.length;
+                    counterDiv.textContent = `${length}/${maxChars} characters`;
+                    
+                    if (length > maxChars) {
+                        e.target.value = e.target.value.slice(0, maxChars);
+                        counterDiv.textContent = `${maxChars}/${maxChars} characters (limit reached)`;
+                        counterDiv.style.color = '#f44336';
+                    } else if (length > maxChars * 0.9) {
+                        counterDiv.style.color = '#ff9800';
+                    } else {
+                        counterDiv.style.color = '#666';
+                    }
+                    
+                    if (length < 20 && length > 0) {
+                        e.target.setCustomValidity('Description must be at least 20 characters');
+                    } else {
+                        e.target.setCustomValidity('');
+                    }
+                });
+            }
+
+            // Registration number validation
+            const regNumberInput = document.getElementById('pet-registration');
+            if (regNumberInput) {
+                regNumberInput.addEventListener('input', function(e) {
+                    const regRegex = /^[a-zA-Z0-9-]*$/;
+                    if (!regRegex.test(e.target.value)) {
+                        e.target.value = e.target.value.replace(/[^a-zA-Z0-9-]/g, '');
+                    }
+                });
+            }
+
+            const breedInput = document.getElementById('pet-breed');
+            if (breedInput) {
+                breedInput.addEventListener('input', function(e) {
+                    const breedRegex = /^[a-zA-Z\s-]*$/;
+                    if (!breedRegex.test(e.target.value)) {
+                        e.target.value = e.target.value.replace(/[^a-zA-Z\s-]/g, '');
+                    }
+                    
+                    if (e.target.value.length > 0 && e.target.value.length < 2) {
+                        e.target.setCustomValidity('Breed must be at least 2 characters');
+                        e.target.classList.add('invalid');
+                        e.target.classList.remove('valid');
+                    } else if (e.target.value.length > 50) {
+                        e.target.setCustomValidity('Breed must be less than 50 characters');
+                        e.target.classList.add('invalid');
+                        e.target.classList.remove('valid');
+                    } else {
+                        e.target.setCustomValidity('');
+                        e.target.classList.remove('invalid');
+                        if (e.target.value.length >= 2) {
+                            e.target.classList.add('valid');
+                        }
+                    }
+                });
+            }
+
+            // State-district relationship
+            const stateSelect = document.getElementById('state');
+            if (stateSelect && districtInput) {
+                stateSelect.addEventListener('change', function() {
+                    if (this.value) {
+                        const stateName = this.options[this.selectedIndex].text;
+                        districtInput.placeholder = `Enter district in ${stateName}`;
+                    } else {
+                        districtInput.placeholder = 'Enter district name';
+                    }
+                });
+            }
+
+            // Form submission
+            mateForm.addEventListener('submit', function(event) {
+                let isValid = true;
+                const errors = [];
+                
+                const requiredFields = mateForm.querySelectorAll('[required]');
+                requiredFields.forEach(field => {
+                    if (!field.value || (field.type === 'checkbox' && !field.checked)) {
+                        isValid = false;
+                        field.classList.add('invalid');
+                        errors.push(`${field.name || field.id} is required`);
+                    }
+                });
+                
+                if (fileInput && fileInput.files.length === 0) {
+                    isValid = false;
+                    errors.push('At least one image is required');
+                }
+                
+                if (fileInput && fileInput.files.length > 4) {
+                    isValid = false;
+                    errors.push('Maximum 4 images allowed');
+                }
+                
+                if (phoneInput && phoneInput.value.length !== 10) {
+                    isValid = false;
+                    errors.push('Phone number must be exactly 10 digits');
+                }
+                
+                const termsCheckbox = document.getElementById('terms');
+                if (termsCheckbox && !termsCheckbox.checked) {
+                    isValid = false;
+                    errors.push('You must agree to the Terms & Conditions');
+                }
+                
+                const healthCheckbox = document.getElementById('health-check');
+                if (healthCheckbox && !healthCheckbox.checked) {
+                    isValid = false;
+                    errors.push('You must confirm your pet is healthy and vaccinated');
+                }
+                
+                if (!isValid) {
+                    event.preventDefault();
+                    
+                    let errorMessage = 'Please fix the following errors:\n\n';
+                    errors.slice(0, 5).forEach(error => {
+                        errorMessage += '• ' + error + '\n';
+                    });
+                    
+                    alert(errorMessage);
+                    
+                    const firstInvalid = mateForm.querySelector('.invalid, [required]:invalid');
+                    if (firstInvalid) {
+                        firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        firstInvalid.focus();
+                    }
+                } else {
+                    const submitBtn = mateForm.querySelector('.submit-mate-btn');
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+                    }
+                }
+            });
+        }
+
+        function initializeFilters() {
+            const petsGrid = document.querySelector('.pets-grid');
+            if (!petsGrid) return;
+
+            const petTypeCheckboxes = document.querySelectorAll('input[name="petType"]');
+            const genderCheckboxes = document.querySelectorAll('input[name="gender"]');
+            const breedCheckboxes = document.querySelectorAll('input[name="breed"]');
+            const stateSelect = document.getElementById('state-filter');
+            const districtInput = document.getElementById('district-filter');
+
+            petTypeCheckboxes.forEach(cb => cb.addEventListener('change', applyFiltersAsync));
+            genderCheckboxes.forEach(cb => cb.addEventListener('change', applyFiltersAsync));
+            breedCheckboxes.forEach(cb => cb.addEventListener('change', applyFiltersAsync));
+            if (stateSelect) stateSelect.addEventListener('change', applyFiltersAsync);
+            if (districtInput) districtInput.addEventListener('input', debounce(applyFiltersAsync, 500));
+
+            // Clear filters button
+            const clearAllFiltersBtn = document.getElementById('clear-all-filters');
+            if (clearAllFiltersBtn) {
+                clearAllFiltersBtn.addEventListener('click', async function() {
+                    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                        checkbox.checked = false;
+                    });
+                    if (stateSelect) stateSelect.value = '';
+                    if (districtInput) districtInput.value = '';
+                    await applyFiltersAsync();
+                });
+            }
+
+            async function applyFiltersAsync() {
+                const selectedPetTypes = Array.from(petTypeCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
+                const selectedGenders = Array.from(genderCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
+                const selectedBreeds = Array.from(breedCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
+                const selectedState = stateSelect ? stateSelect.value : '';
+                const selectedDistrict = districtInput ? districtInput.value : '';
+
+                const params = new URLSearchParams();
+                if (selectedPetTypes.length > 0) params.append('petType', selectedPetTypes.join(','));
+                if (selectedGenders.length > 0) params.append('gender', selectedGenders.join(','));
+                if (selectedBreeds.length > 0) params.append('breed', selectedBreeds.join(','));
+                if (selectedState) params.append('state', selectedState);
+                if (selectedDistrict) params.append('district', selectedDistrict);
+
+                petsGrid.innerHTML = '<div style="text-align: center; padding: 40px; grid-column: 1/-1;"><i class="fas fa-spinner fa-spin" style="font-size: 2rem;"></i><p>Loading pets...</p></div>';
+
+                try {
+                    const response = await fetch(`/pets/mate/api/filter?${params.toString()}`);
+                    const data = await response.json();
+
+                    if (data.success && data.pets.length > 0) {
+                        renderPets(data.pets);
+                    } else {
+                        petsGrid.innerHTML = '<div style="text-align: center; padding: 40px; grid-column: 1/-1;"><p>No pets match your filters.</p></div>';
+                    }
+                } catch (error) {
+                    console.error('Error filtering pets:', error);
+                    petsGrid.innerHTML = '<div style="text-align: center; padding: 40px; grid-column: 1/-1; color: #f44336;"><p>Error loading pets. Please try again.</p></div>';
+                }
+            }
+
+            function renderPets(pets) {
+                petsGrid.innerHTML = pets.map(pet => {
+                    let imageHtml = '<img src="/images/default-pet.jpg" alt="Default pet image">';
+                    
+                    if (pet.images && pet.images.length > 0) {
+                        const image = pet.images[0];
+                        if (image.dataBase64) {
+                            imageHtml = `<img src="data:${image.contentType};base64,${image.dataBase64}" alt="${pet.name}">`;
+                        }
+                    }
+                    
+                    return `
+                        <a href="/services/breeders">
+                            <div class="pet-card">
+                                <div class="pet-image">
+                                    ${imageHtml}
+                                    <div class="pet-badge ${pet.gender === 'male' ? 'male' : 'female'}">
+                                        <i class="fas ${pet.gender === 'male' ? 'fa-mars' : 'fa-venus'}"></i>
+                                    </div>
+                                </div>
+                                <div class="pet-info">
+                                    <h3 class="pet-name">${pet.name}</h3>
+                                    <div class="pet-details">
+                                        <p><i class="fas fa-paw"></i> <strong>Breed:</strong> ${pet.breed}</p>
+                                        <p><i class="fas fa-birthday-cake"></i> <strong>Age:</strong> ${pet.age.value} ${pet.age.unit}</p>
+                                        <p><i class="fas fa-map-marker-alt"></i> <strong>Location:</strong> ${pet.location.district}, ${pet.location.state}</p>
+                                        <p><i class="fas fa-phone"></i> <strong>Contact:</strong> ${pet.contact.phone}</p>
+                                        <p><i class="fas fa-envelope"></i> <strong>Email:</strong> ${pet.contact.email}</p>
+                                        ${pet.description ? `<p class="pet-description"><i class="fas fa-info-circle"></i> ${pet.description}</p>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    `;
+                }).join('');
+            }
+        }
+
+        function initializeNavigation() {
+            const hamburger = document.querySelector('.hamburger');
+            const navLinks = document.querySelector('.nav-links');
+            
+            if (hamburger && navLinks) {
+                hamburger.addEventListener('click', function() {
+                    navLinks.classList.toggle('active');
+                });
+            }
+        }
+
+        function handleUrlMessages() {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // Success message
+            if (urlParams.get('success') === 'true') {
+                const successDiv = document.createElement('div');
+                successDiv.className = 'success-message show';
+                successDiv.style.cssText = `
+                    background-color: #4CAF50;
+                    color: white;
+                    padding: 15px;
+                    border-radius: 5px;
+                    margin-bottom: 20px;
+                    text-align: center;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                `;
+                successDiv.innerHTML = `
+                    <i class="fas fa-check-circle" style="font-size: 1.5rem; margin-right: 10px;"></i>
+                    <strong>Success!</strong> Your pet has been listed for mating.
+                `;
+                
+                const submissionSection = document.querySelector('.mate-submission-section');
+                if (submissionSection) {
+                    submissionSection.insertBefore(successDiv, submissionSection.firstChild);
+                    successDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    
+                    setTimeout(() => {
+                        successDiv.style.opacity = '0';
+                        successDiv.style.transition = 'opacity 0.5s';
+                        setTimeout(() => successDiv.remove(), 500);
+                    }, 5000);
+                    
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+            }
+            
+            // Error message
+            const errorParam = urlParams.get('error');
+            if (errorParam) {
+                const errorDiv = document.createElement('div');
+                errorDiv.style.cssText = `
+                    background-color: #f44336;
+                    color: white;
+                    padding: 15px;
+                    border-radius: 5px;
+                    margin-bottom: 20px;
+                    text-align: center;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                `;
+                errorDiv.innerHTML = `
+                    <i class="fas fa-exclamation-circle" style="font-size: 1.5rem; margin-right: 10px;"></i>
+                    <strong>Error!</strong> ${decodeURIComponent(errorParam)}
+                `;
+                
+                const submissionSection = document.querySelector('.mate-submission-section');
+                if (submissionSection) {
+                    submissionSection.insertBefore(errorDiv, submissionSection.firstChild);
+                    errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,314 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title><%= pageTitle %></title>
+
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/services.css">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/homepage.css">
+  <style>
+      .cart-icon {
+          position: relative;
+      }
+      .cart-count {
+          position: absolute;
+          top: -5px;
+          right: -5px;
+          background-color: #ff6b6b;
+          color: white;
+          font-size: 12px;
+          font-weight: bold;
+          border-radius: 50%;
+          width: 18px;
+          height: 18px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+      }
+      /* Dynamic Review Styles */
+      .review-header-small {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 8px;
+      }
+      .review-header-small strong {
+          color: #333;
+          font-size: 0.9rem;
+      }
+      .review-date {
+          color: #999;
+          font-size: 0.75rem;
+          margin-top: 5px;
+          display: block;
+      }
+      .review-preview {
+          margin-bottom: 15px;
+          padding-bottom: 15px;
+          border-bottom: 1px solid #eee;
+      }
+      .review-preview:last-child {
+          border-bottom: none;
+      }
+  </style>
+</head>
+<body data-user-logged-in="<%= locals.user ? 'true' : 'false' %>">
+    <%- include('partials/header') %>
+
+    <div class="main-container">
+      <!-- Filters Sidebar -->
+      <div class="filters-sidebar">
+        <h2>Filters</h2>
+        
+        <!-- Category Filter -->
+        <div class="filter-section">
+          <h3>Category</h3>
+          <div class="filter-options">
+            <div class="filter-option">
+              <input type="checkbox" class="filter-checkbox" name="category" value="veterinarian" id="vet">
+              <label for="vet">Veterinary Doctor</label>
+            </div>
+            <div class="filter-option">
+              <input type="checkbox" class="filter-checkbox" name="category" value="groomer" id="grooming">
+              <label for="grooming">Pet Grooming</label>
+            </div>
+            <div class="filter-option">
+              <input type="checkbox" class="filter-checkbox" name="category" value="trainer" id="training">
+              <label for="training">Dog Training</label>
+            </div>
+            <div class="filter-option">
+              <input type="checkbox" class="filter-checkbox" name="category" value="pet sitter" id="pet-sitting">
+              <label for="pet-sitting">Pet Sitting</label>
+            </div>
+            <div class="filter-option">
+              <input type="checkbox" class="filter-checkbox" name="category" value="breeder" id="breeding">
+              <label for="breeding">Breeding Services</label>
+            </div>
+            <div class="filter-option">
+              <input type="checkbox" class="filter-checkbox" name="category" value="walking" id="walking">
+              <label for="walking">Dog Walking</label>
+            </div>
+            <div class="filter-option">
+              <input type="checkbox" class="filter-checkbox" name="category" value="sitting" id="sitting">
+              <label for="sitting">Pet Sitting</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Price Filter -->
+        <div class="filter-section">
+          <h3>Price Range</h3>
+          <div class="price-filter">
+            <input type="number" id="min-price" placeholder="Min" min="0">
+            <span>to</span>
+            <input type="number" id="max-price" placeholder="Max" min="0">
+            <button id="apply-price">Apply</button>
+          </div>
+        </div>
+
+        <!-- Rating Filter -->
+        <div class="filter-section">
+          <h3>Rating</h3>
+          <div class="filter-options">
+            <div class="filter-option">
+              <input type="checkbox" class="filter-checkbox" name="rating" value="4" id="rating4">
+              <label for="rating4">4★ & above</label>
+            </div>
+            <div class="filter-option">
+              <input type="checkbox" class="filter-checkbox" name="rating" value="3" id="rating3">
+              <label for="rating3">3★ & above</label>
+            </div>
+            <div class="filter-option">
+              <input type="checkbox" class="filter-checkbox" name="rating" value="2" id="rating2">
+              <label for="rating2">2★ & above</label>
+            </div>
+          </div>
+        </div>
+
+        <button class="clear-filters">Clear All Filters</button>
+      </div>
+
+      <!-- Services Content -->
+      <div class="services-content">
+        <h1 style="color: black;" class="page-title"><%= pageTitle %></h1>
+        <div class="services-container">
+          <!-- Loop through services array from app.js -->
+          <% services.forEach(service => { %>
+            <div 
+              class="service-card" 
+              data-category="<%= service.serviceType.toLowerCase() %>" 
+              data-price="<%= service.price %>" 
+              data-rating="<%= service.rating || 0 %>"
+            >
+              <div class="service-image">
+                <%
+  let imagePath = '/images/services/service2.jpg'; // fallback image
+  switch (service.serviceType.toLowerCase()) {
+    case 'veterinarian':
+      imagePath = '/images/services/service1.jpg';
+      break;
+    case 'groomer':
+      imagePath = '/images/services/service7.jpg';
+      break;
+    case 'pet sitter':
+      imagePath = '/images/services/service11.jpg';
+      break;
+    case 'trainer':
+      imagePath = '/images/services/service6.jpg';
+      break;
+    case 'breeder':
+      imagePath = '/images/services/service12.jpg';
+      break;
+  }
+%>
+<img src="<%= imagePath %>" alt="<%= service.name %>">
+
+              </div>
+              <div class="service-info">
+                <h2 class="service-name"><%= service.fullName %></h2>
+                <div class="service-meta">
+                  <p class="service-category"><%= service.serviceType%></p>
+                </div>
+                
+                <p class="service-location">
+                  <%= service.serviceAddress %>
+                </p>
+                
+                <p class="service-contact">
+                  <i class="fa fa-phone"></i> <%= service.phone %> 
+                  <span class="service-email"><i class="fa fa-envelope"></i> <%= service.email %></span>
+                </p>
+                
+                
+                
+                <!-- Top Reviews Section - Dynamic from MongoDB -->
+                <% if (service.topReviews && service.topReviews.length > 0) { %>
+                  <div class="top-reviews">
+                    <h4>Recent Reviews</h4>
+                    <% service.topReviews.forEach(review => { %>
+                      <div class="review-preview">
+                        <div class="review-header-small">
+                          <strong><%= review.userName || 'Anonymous' %></strong>
+                          <div class="review-stars">
+                            <% for (let i = 1; i <= 5; i++) { %>
+                              <i class="fas fa-star <%= i <= review.rating ? 'filled' : '' %>"></i>
+                            <% } %>
+                          </div>
+                        </div>
+                        <p class="review-text"><%= review.comment ? `"${review.comment.substring(0, 80)}${review.comment.length > 80 ? '...' : ''}"` : 'No comment provided' %></p>
+                        <small class="review-date"><%= new Date(review.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %></small>
+                      </div>
+                    <% }) %>
+                  </div>
+                <% } %>
+
+                <div class="service-buttons">
+                  <button class="service-btn" onclick="bookService('<%= service.id %>')">
+                    Book Appointment
+                  </button>
+                  <a href="/services/<%= service.id %>" class="service-btn details-btn">
+                    View Details
+                  </a>
+                </div>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer id="footer">
+        <div class="footer-container">
+            <div class="footer-logo">
+                <h2>PetVerse</h2>
+                <p>Your one-stop destination for all pet needs</p>
+            </div>
+            <div class="footer-links">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Shop</a></li>
+                    <li><a href="#">Services</a></li>
+                    <li><a href="#">Events</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-social">
+                <h3>Follow Us</h3>
+                <a href="https://facebook.com" target="_blank" class="social-icon">Facebook</a>
+                <a href="https://instagram.com" target="_blank" class="social-icon">Instagram</a>
+                <a href="https://twitter.com" target="_blank" class="social-icon">Twitter</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 PetVerse. All Rights Reversed</p>
+        </div>
+    </footer>
+
+    <script src="/js/cart-manager.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize cart count
+            if (typeof cartManager !== 'undefined') {
+                cartManager.initializeCart();
+            } else {
+                // Fallback if cart-manager.js is not loaded
+                fetch('/cart/count')
+                    .then(response => response.json())
+                    .then data => {
+                        if (data.success) {
+                            const cartCount = document.getElementById('cartCount');
+                            if (cartCount) {
+                                cartCount.textContent = data.cartCount;
+                                cartCount.style.display = data.cartCount > 0 ? 'inline-block' : 'none';
+                            }
+                        }
+                    })
+                    .catch(error => console.error('Error fetching cart count:', error));
+            }
+        });
+    </script>
+
+    <!-- JS -->
+    <script src="/js/Services.js"></script>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get all dropdown toggles
+    const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+    
+    dropdownToggles.forEach(toggle => {
+        toggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Close all other dropdowns
+            dropdownToggles.forEach(other => {
+                if (other !== toggle) {
+                    other.nextElementSibling?.classList.remove('show');
+                }
+            });
+            
+            // Toggle current dropdown
+            const dropdownMenu = this.nextElementSibling;
+            dropdownMenu?.classList.toggle('show');
+        });
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.matches('.dropdown-toggle')) {
+            document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                menu.classList.remove('show');
+            });
+        }
+    });
+});
+</script>
+  </body>
+</html>

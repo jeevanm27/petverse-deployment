@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <title>PetVerse - Your Pet Care Companion</title>
+    <link rel="icon" href="'/images/favicon.ico'">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/homepage.css">
+    <style>
+        .cart-icon {
+            position: relative;
+        }
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #ff6b6b;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pet-card ,.product-card{
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            height: 100%; /* Ensure consistent height */
+        }
+
+        .pet-card img ,.product-card img{
+        width: 100%;
+        height: 250px; /* Fixed height */
+        object-fit: cover; /* Maintain aspect ratio */
+        border-bottom: 1px solid #ddd;
+        }
+
+        .pet-card .price , .product-card .price{
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/header') %>
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Find your <span>Perfect Pet</span></h1>
+            <p>Find your furry friend and everything they need</p>
+            <button class="adopt-btn" onclick="window.location.href='/pets'">Adopt Now</button>
+        </div>
+    </section>
+    <section id="slideshow">
+        <div class="slideshow-container">
+            <% slides.forEach(function(slide, index) { %>
+                <div class="slide fade">
+                    <img src="<%= slide.image %>" alt="slide<%= index + 1 %>">
+                    <div class="caption"><%= slide.caption %></div>
+                </div>
+            <% }); %>
+            <button class="slideshow-btn prev" onclick="changeSlide(-1)">&#10094;</button>
+            <button class="slideshow-btn next" onclick="changeSlide(1)">&#10095;</button>
+        </div>
+        <div class="dots">
+        </div>
+    </section>
+    <hr>
+    <section id="searchby-pet" class="searchby-pet">
+        <div class="searchby-pet-content">
+            <h1 class="section-title">Search by Pet</h1>
+            <div class="pet-grid">
+                <% petCategories.forEach(function(pet) { %>
+                    <div class="pet-card">
+                        <img src="<%= pet.image %>" alt="<%= pet.name.toLowerCase() %>">
+                        <h2 class="card-text"><%= pet.name %></h2>
+                        <button class="card-button" onclick="window.location.href='/pets'">Explore</button>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    </section>
+    <hr>
+    <section class="feature-pets">
+        <div class="feature-pets-content">
+            <h1 class="section-title">Featured Pets</h1>
+            <div class="pet-grid">
+                <% featuredPets.forEach(pet => { %>
+                    <div class="pet-card">
+                        <% 
+                            if (pet.images && pet.images.length > 0)
+                            {%>
+                                    <img src="data:<%=pet.images[0].contentType%>;base64,<%=pet.images[0].data.toString('base64')%>" alt="<%=pet.name%>" class="pet-image">
+                            <%}
+                            else 
+                            {%>
+                                <p>No images available</p>    
+                            <%}
+                        %>
+                        <p class="price"><strong>₹ <%= pet.price %></strong></p>
+                        <button class="card-button" onclick="window.location.href='/pets'">Buy Now</button>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    </section>
+    <hr>
+    <section class="feature-prod">
+        <div class="feature-pdts-content">
+            <h1 class="section-title">Featured Products</h1>
+            <div class="product-grid">
+                <%featuredProducts.forEach(product=> {%>
+                        <div class="product-card">
+                            <%
+                            if (product.images && product.images.length > 0){%>
+                                <img src="data:<%=product.images[0].contentType%>;base64,<%=product.images[0].data.toString('base64')%>" alt="<%=product.name%>" class="product-image">    
+                            <%}
+                            else {%>
+                                <p>No images available</p>    
+                            <%}
+                            %>
+                            <p class="price"><strong>₹ <%=product.price%></strong></p>
+                            <button class="card-button" onclick="window.location.href='/products'">Buy Now</button>
+                        </div>
+                    <%})
+                %>
+            </div>
+        </div>
+    </section>
+    <section id="about" class="about">
+        <div class="container">
+            <h2 class="section-title">About Petverse</h2>
+                <p class="about-text">Welcome to PetVerse, your one-stop destination for all things pets!</p>
+                <p class="about-text">We are dedicated to helping you find the perfect pet and providing everything they need to live a happy and healthy life.</p>
+            <h3 class="features-title">Why Choose Us</h3>
+            <ul class="features-list">
+                <% features.forEach(function(feature) { %>
+                    <li><span class="point">✔ &nbsp</span><strong> <%= feature.title %>:</strong> <%= feature.description %></li>
+                <% }); %>
+            </ul>
+        </div>
+    </section>
+    
+    <section class="testimonials">
+        <div class="testimonial-section">
+            <h2>What Our Customers Say</h2>
+            <div class="testimonial-cards">
+                <% testimonials.forEach(function(testimonial) { %>
+                    <div class="testimonial">
+                        <p>"<%= testimonial.text %>"</p>
+                        <span>- <%= testimonial.author %></span>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    </section>
+    
+    <section class="call-to-action">
+        <h2>Ready to Find Your Perfect Pet?</h2>
+        <p>Join our community of pet lovers today</p>
+        <div class="cta-buttons">
+                <button id="adopt" onclick="window.location.href='/pets'" class="cta-btn">Adopt a Pet</button>
+                <button id="shop" onclick="window.location.href='/products'" class="cta-btn">Shop Products</button>
+        </div>
+    </section>
+    <footer id="footer">
+        <div class="footer-container">
+            <div class="footer-logo">
+                <h2>PetVerse</h2>
+                <p>Your Pet Care Companion</p>
+            </div>
+            <div class="footer-links">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="/home">Home</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                    <li><a href="/privacy">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-social">
+                <h3>Follow Us</h3>
+                    <a href="#" target="_blank" class="social-icon">Facebook</a>
+                    <a href="#" target="_blank" class="social-icon">Twitter</a>
+                    <a href="#" target="_blank" class="social-icon">Instagram</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; <%= new Date().getFullYear() %> PetVerse. All Rights Reserved</p>
+        </div>
+    </footer>
+    <script src="/js/script.js"></script>
+    <script src="/js/cart-manager.js"></script>
+    <script>
+        // Handle user button click based on user role
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize cart count
+            if (typeof cartManager !== 'undefined') {
+                cartManager.initializeCart();
+            } else {
+                // Fallback if cart-manager.js is not loaded
+                fetch('/cart/count')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const cartCount = document.getElementById('cartCount');
+                            if (cartCount) {
+                                cartCount.textContent = data.cartCount;
+                                cartCount.style.display = data.cartCount > 0 ? 'inline-block' : 'none';
+                            }
+                        }
+                    })
+                    .catch(error => console.error('Error fetching cart count:', error));
+            }
+            
+            const userButton = document.getElementById('userButton');
+            
+            if (userButton) {
+                userButton.addEventListener('click', function() {
+                    // Check user session status
+                    fetch('/check-session')
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.isLoggedIn) {
+                                if (data.isAdmin) {
+                                    // Redirect admin to admin dashboard
+                                    window.location.href = '/admin/dashboard';
+                                } else {
+                                    // Redirect non-admin to profile page
+                                    window.location.href = '/owner-dashboard';
+                                }
+                            } else {
+                                // Not logged in, redirect to login page
+                                window.location.href = '/login';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error checking session:', error);
+                            // Default to login page on error
+                            window.location.href = '/login';
+                        });
+                });
+            }
+        });
+    </script>
+</body>
+</html>

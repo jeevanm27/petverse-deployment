@@ -1,0 +1,203 @@
+<!-- about.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | PetVerse</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/about.css">
+</head>
+<body>
+    <%- include('partials/header') %>
+    <section class="hero">
+        <div class="hero-content">
+            <h1>About Us</h1>
+            <p>PetVerse is a community where pet lovers connect, sell, and find everything their furry friends need.</p>
+            <a href="/signup" class="hero-btn">Join Our Community</a>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-number"><%= activeUsers %>+</div>
+                <div class="stat-label">Active Users</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number"><%= activeSellers %>+</div>
+                <div class="stat-label">Pet Sellers</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number"><%= activeServiceProviders %>+</div>
+                <div class="stat-label">Service Providers</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number"><%= petsAvailable %></div>
+                <div class="stat-label">Pets Available</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission Section -->
+    <section class="mission">
+        <div class="mission-container">
+            <div class="mission-text">
+                <h2>Our Mission</h2>
+                <p>At PetVerse, we aim to build a vibrant community of pet lovers by making it easier than ever to care for and connect with pets. Our vision is to ensure every pet finds a loving home and every pet parent has access to reliable services and products.</p>
+                <p>We believe in creating a safe, transparent marketplace where buyers can find trusted sellers and service providers. Our platform brings together all aspects of pet ownership - from adoption to healthcare, from training to everyday supplies - in one convenient place.</p>
+                <p>Every connection made on PetVerse contributes to our goal of improving the lives of pets and their humans everywhere.</p>
+            </div>
+            <div class="mission-image">
+                <img src="https://images.unsplash.com/photo-1534361960057-19889db9621e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" alt="Happy pets and owners">
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <h2>What We Offer</h2>
+        <div class="features-container">
+            <div class="feature-card">
+                <div class="feature-icon">🐾</div>
+                <div class="feature-content">
+                    <h3>Pet Adoption</h3>
+                    <p>Find your perfect companion through our safe and verified platform. Connect with responsible breeders and rescues.</p>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🛒</div>
+                <div class="feature-content">
+                    <h3>Pet Essentials</h3>
+                    <p>Shop premium pet food, toys, and accessories tailored to your pet's specific needs from trusted sellers.</p>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">👨‍⚕️</div>
+                <div class="feature-content">
+                    <h3>Professional Services</h3>
+                    <p>Book appointments with vets, trainers, groomers, and more based on your schedule.</p>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">❤️</div>
+                <div class="feature-content">
+                    <h3>Pet Mating</h3>
+                    <p>Connect with other pet owners to find the perfect match for your pet in a safe, responsible environment.</p>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🏠</div>
+                <div class="feature-content">
+                    <h3>Pet Community</h3>
+                    <p>Join pet-friendly events, share experiences, and connect with other pet enthusiasts in your area.</p>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <div class="feature-content">
+                    <h3>Verified Sellers</h3>
+                    <p>All our sellers and service providers are carefully vetted to ensure quality and reliability.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Community Section -->
+    <section class="community">
+        <div class="community-container">
+            <h2>Join Our Pet-Loving Community</h2>
+            <p>PetVerse is more than just a marketplace - it's a community of passionate pet lovers who share knowledge, experiences, and support. Whether you're a first-time pet parent or a seasoned professional, there's a place for you here.</p>
+            <p>Connect with like-minded individuals, discover pet-friendly events in your area, and be part of a movement that's making pet care more accessible and enjoyable for everyone.</p>
+            <div class="community-buttons">
+                <a href="/signup" class="community-btn">Sign Up Today</a>
+                <a href="/events" class="community-btn">Discover Events</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="team">
+        <h2>Meet Our Team</h2>
+        <div class="team-container">
+            <div class="team-member">
+                <div class="team-photo">
+                    <img src="/images/mem.jpg" alt="Team Member">
+                </div>
+                <div class="team-info">
+                    <h3>Dhyaneshvar K</h3>
+                    <p>Member 1</p>
+                    <div class="team-social">
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="team-member">
+                <div class="team-photo">
+                    <img src="/images/mem.jpg" alt="Team Member">
+                </div>
+                <div class="team-info">
+                    <h3>Jeevan M</h3>
+                    <p>Member 2</p>
+                    <div class="team-social">
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="team-member">
+                <div class="team-photo">
+                    <img src="/images/mem.jpg" alt="Team Member">
+                </div>
+                <div class="team-info">
+                    <h3>Suresh</h3>
+                    <p>Mmeber 3</p>
+                    <div class="team-social">
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="team-member">
+                <div class="team-photo">
+                    <img src="/images/mem.jpg" alt="Team Member">
+                </div>
+                <div class="team-info">
+                    <h3>Koushik</h3>
+                    <p>Member 4</p>
+                    <div class="team-social">
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="team-member">
+                <div class="team-photo">
+                    <img src="/images/mem.jpg" alt="Team Member">
+                </div>
+                <div class="team-info">
+                    <h3>Charan</h3>
+                    <p>Member 5</p>
+                    <div class="team-social">
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <%- include('partials/footer') %>
+    <script src="/js/script.js"></script>
+
+</body>
+</html>

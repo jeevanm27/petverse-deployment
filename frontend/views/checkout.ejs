@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - PetVerse</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/homepage.css">
+    <link rel="stylesheet" href="/css/checkout.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .gap {
+            width: 40px;
+        }
+        .checkout-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            margin-top: 50px;
+        }
+        .checkout-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+        .checkout-form-container, .checkout-summary {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .btn {
+            background: #FF6B01;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .order-item {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+        .order-item-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .summary-total {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin: 20px 0;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+        .order-item {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            align-items: flex-start;
+        }
+        .order-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        .order-item-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            margin-right: 15px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+        .order-item-details {
+            flex: 1;
+        }
+        .order-item-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+            margin: 0 0 8px 0;
+            line-height: 1.3;
+        }
+        .order-item-meta {
+            font-size: 0.85rem;
+            color: #666;
+            margin: 0 0 8px 0;
+            line-height: 1.4;
+        }
+        .order-item-quantity {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #555;
+        }
+        .order-item-price {
+            font-weight: 600;
+            color: #333;
+        }
+        .discount-badge {
+            background-color: #ff6b6b;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-left: 8px;
+            display: inline-block;
+        }
+        .pet-detail {
+            display: inline-block;
+            margin-right: 10px;
+            font-size: 0.8rem;
+        }
+        .pet-detail i {
+            margin-right: 4px;
+            color: #FF6B01;
+        }
+        .empty-order {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-style: italic;
+        }
+        .form-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .form-control {
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #FF6B01;
+            box-shadow: 0 0 5px rgba(255, 107, 1, 0.3);
+        }
+
+        .form-control.invalid {
+            border-color: #dc3545;
+            box-shadow: 0 0 5px rgba(220, 53, 69, 0.3);
+        }
+
+        .form-control.valid {
+            border-color: #28a745;
+            box-shadow: 0 0 5px rgba(40, 167, 69, 0.3);
+        }
+        
+        .error-message {
+            margin-top: 5px;
+            color: #dc3545;
+            font-size: 0.875rem;
+            display: none;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-icon, .error-icon {
+            position: absolute;
+            right: 10px;
+            top: 38px;
+            font-size: 1.2rem;
+            display: none;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .success-icon {
+            color: #28a745;
+        }
+
+        .error-icon {
+            color: #dc3545;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        label span.required {
+            color: #dc3545;
+            margin-left: 2px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header" id="header">
+        <nav id="navbar" class="navbar">
+            <div class="nav-content">
+                <div class="logo"><a href="/"><i class="fa fa-paw"></i> PetVerse</a></div>
+                <div class="nav-icons">
+                    <button onclick="window.location.href='/cart'" class="icon-btn"><i class="fa fa-shopping-cart"></i></button>
+                    <button onclick="window.location.href='/login'"class="icon-btn"><i class="fa fa-user"></i></button>
+                </div>
+                <div class="search">
+                    <input class="search-bar" type="text" placeholder=" Search pets, products or services">
+                    <button class="search-btn"><i class="fa fa-search"></i></button>
+                </div>
+                <button class="hamburger" id="hamburger">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/pets">Pets</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle">Products <i class="fa fa-angle-down"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/products/petfood">Pet Food</a></li>
+                            <li><a href="/products/toys">Toys</a></li>
+                            <li><a href="/products/accessories">Accessories</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle">Services <i class="fa fa-angle-down"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/services">Services</a></li>
+                            <li><a href="/mate">PetMate</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <div class="checkout-container">
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div class="alert alert-error" style="
+                background-color: #fee2e2;
+                color: #b91c1c;
+                padding: 12px 16px;
+                margin-bottom: 20px;
+                border: 1px solid #fca5a5;
+                border-radius: 6px;
+            ">
+                <i class="fa fa-exclamation-circle"></i> <%= error %>
+            </div>
+        <% } %>
+
+        <h1 class="section-title">Checkout</h1>
+        
+        <div class="checkout-grid">
+            <form id="checkoutForm" action="/checkout" method="POST" class="checkout-form-container">
+                <h2 class="section-title">Shipping Information</h2>
+                <div class="checkout-form">
+                    <div class="form-group">
+                        <label for="fullName">Full Name <span class="required">*</span></label>
+                        <input type="text" id="fullName" name="fullName" class="form-control" required minlength="2" maxlength="50" placeholder="Enter your full name">
+                        <i class="fa fa-check-circle success-icon" id="fullName-success"></i>
+                        <i class="fa fa-times-circle error-icon" id="fullName-error"></i>
+                        <div class="error-message" id="fullName-error-msg"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Address <span class="required">*</span></label>
+                        <input type="text" id="address" name="address" class="form-control" required minlength="10" maxlength="200" placeholder="Enter your complete address">
+                        <i class="fa fa-check-circle success-icon" id="address-success"></i>
+                        <i class="fa fa-times-circle error-icon" id="address-error"></i>
+                        <div class="error-message" id="address-error-msg"></div>
+                    </div>
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="form-group">
+                            <label for="city">City <span class="required">*</span></label>
+                            <input type="text" id="city" name="city" class="form-control" required minlength="2" maxlength="50" placeholder="City">
+                            <i class="fa fa-check-circle success-icon" id="city-success"></i>
+                            <i class="fa fa-times-circle error-icon" id="city-error"></i>
+                            <div class="error-message" id="city-error-msg"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="state">State <span class="required">*</span></label>
+                            <input type="text" id="state" name="state" class="form-control" required minlength="2" maxlength="50" placeholder="State">
+                            <i class="fa fa-check-circle success-icon" id="state-success"></i>
+                            <i class="fa fa-times-circle error-icon" id="state-error"></i>
+                            <div class="error-message" id="state-error-msg"></div>
+                        </div>
+                    </div>
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="form-group">
+                            <label for="zipCode">Zip Code <span class="required">*</span></label>
+                            <input type="text" id="zipCode" name="zipCode" class="form-control" required pattern="[0-9]{6}" maxlength="6" placeholder="6-digit PIN code">
+                            <i class="fa fa-check-circle success-icon" id="zipCode-success"></i>
+                            <i class="fa fa-times-circle error-icon" id="zipCode-error"></i>
+                            <div class="error-message" id="zipCode-error-msg"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone <span class="required">*</span></label>
+                            <input type="tel" id="phone" name="phone" class="form-control" required pattern="[6-9][0-9]{9}" maxlength="10" placeholder="10-digit mobile number">
+                            <i class="fa fa-check-circle success-icon" id="phone-success"></i>
+                            <i class="fa fa-times-circle error-icon" id="phone-error"></i>
+                            <div class="error-message" id="phone-error-msg"></div>
+                        </div>
+                    </div>
+                    <!-- Hidden fields for cart data -->
+                    <input type="hidden" id="subtotalValue" name="subtotal" value="<%= cart.subtotal %>">
+                    <input type="hidden" id="shippingValue" name="shipping" value="<%= cart.shipping %>">
+                    <input type="hidden" id="taxValue" name="tax" value="<%= cart.tax %>">
+                    <input type="hidden" id="totalValue" name="total" value="<%= cart.total %>">
+                    
+                    <div class="checkout-navigation" style="margin-top: 20px; display: flex; justify-content: space-between;">
+                        <button type="button" onclick="window.location.href='/cart'" class="btn" style="background: #6b7280;">Back to Cart</button>
+                        <div class="gap"></div>
+                        <button type="submit" id="continueBtn" class="btn">Continue to Payment</button>
+                    </div>
+                </div>
+            </form>
+
+            <div class="checkout-summary">
+                <h2 class="section-title">Order Summary</h2>
+                <div class="order-items" id="orderItems">
+                    <% if (cart && cart.items && cart.items.length > 0) { %>
+                        <% cart.items.forEach(item => { %>
+                            <div class="order-item">
+                                <% if (item.productId && item.productId.images && item.productId.images.length > 0) { %>
+                                    <% if (item.productId.images[0].data) { %>
+                                        <img src="data:<%= item.productId.images[0].contentType %>;base64,<%= item.productId.images[0].data.toString('base64') %>" 
+                                             class="order-item-image" alt="<%= item.productId.name %>">
+                                    <% } else { %>
+                                        <img src="<%= item.productId.images[0].url || '/images/default-product.jpg' %>" 
+                                             class="order-item-image" alt="<%= item.productId.name %>">
+                                    <% } %>
+                                <% } else { %>
+                                    <img src="/images/default-product.jpg" class="order-item-image" alt="<%= item.productId?.name || 'Product' %>">
+                                <% } %>
+                                <div class="order-item-details">
+                                    <h4 class="order-item-name"><%= item.productId?.name || 'Unknown Product' %></h4>
+                                    <% if (item.itemType === 'Product') { %>
+                                        <p class="order-item-meta">
+                                            Brand: <strong><%= item.productId?.brand || 'N/A' %></strong>
+                                            <% if (item.productId?.discount && item.productId.discount > 0) { %>
+                                                <span class="discount-badge"><%= item.productId.discount %>% OFF</span>
+                                            <% } %>
+                                        </p>
+                                    <% } else if (item.itemType === 'Pet') { %>
+                                        <p class="order-item-meta">
+                                            <span class="pet-detail"><i class="fa fa-paw"></i> <%= item.productId?.category || 'Pet' %></span>
+                                            <span class="pet-detail"><i class="fa fa-dog"></i> <%= item.productId?.breed || 'N/A' %></span>
+                                        </p>
+                                    <% } %>
+                                    <div class="order-item-quantity">
+                                        <span>Quantity: <strong><%= item.quantity %></strong></span>
+                                        <span class="order-item-price">₹<%= (item.productId?.price * item.quantity).toFixed(2) %></span>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <div class="empty-order">
+                            <p>No items in cart</p>
+                        </div>
+                    <% } %>
+                </div>
+                <div class="summary-item">
+                    <span>Subtotal</span>
+                    <span id="subtotal">₹0.00</span>
+                </div>
+                <div class="summary-item">
+                    <span>Shipping</span>
+                    <span id="shipping">₹0.00</span>
+                </div>
+                <div class="summary-item">
+                    <span>Tax (10%)</span>
+                    <span id="tax">₹0.00</span>
+                </div>
+                <div class="summary-total">
+                    <span>Total</span>
+                    <span id="total">₹0.00</span>
+                </div>
+                <div style="margin-top: 20px; padding: 15px; background-color: #f0fdf4; border-radius: 8px;">
+                    <p style="margin: 0; color: #4b5563;">
+                        <i class="fa fa-wallet" style="color: #FF6B01;"></i> 
+                        You'll pay using your PetVerse Wallet
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer id="footer">
+        <div class="footer-container">
+            <div class="footer-logo">
+                <h2>PetVerse</h2>
+                <p>Your one-stop destination for all pet needs</p>
+            </div>
+            <div class="footer-links">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Shop</a></li>
+                    <li><a href="#">Services</a></li>
+                    <li><a href="#">Events</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-social">
+                <h3>Follow Us</h3>
+                <a href="https://facebook.com" target="_blank" class="social-icon">Facebook</a>
+                <a href="https://instagram.com" target="_blank" class="social-icon">Instagram</a>
+                <a href="https://twitter.com" target="_blank" class="social-icon">Twitter</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 PetVerse. All Rights Reversed</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Server-side cart data
+            const cartData = {
+                subtotal: parseFloat(<%= cart.subtotal %>) || 0,
+                shipping: parseFloat(<%= cart.shipping %>) || 0,
+                tax: parseFloat(<%= cart.tax %>) || 0,
+                total: parseFloat(<%= cart.total %>) || 0
+            };
+
+            // Update display
+            document.getElementById('subtotal').textContent = `₹${cartData.subtotal.toFixed(2)}`;
+            document.getElementById('shipping').textContent = cartData.shipping === 0 ? 'Free' : `₹${cartData.shipping.toFixed(2)}`;
+            document.getElementById('tax').textContent = `₹${cartData.tax.toFixed(2)}`;
+            document.getElementById('total').textContent = `₹${cartData.total.toFixed(2)}`;
+
+            // Validation rules
+            const validators = {
+                fullName: (value) => {
+                    if (!value || value.trim().length === 0) return 'Full name is required';
+                    if (value.length < 2) return 'Name must be at least 2 characters';
+                    if (value.length > 50) return 'Name must not exceed 50 characters';
+                    if (!/^[a-zA-Z\s]+$/.test(value)) return 'Name should contain only letters';
+                    return null;
+                },
+                address: (value) => {
+                    if (!value || value.trim().length === 0) return 'Address is required';
+                    if (value.length < 10) return 'Address must be at least 10 characters';
+                    if (value.length > 200) return 'Address must not exceed 200 characters';
+                    return null;
+                },
+                city: (value) => {
+                    if (!value || value.trim().length === 0) return 'City is required';
+                    if (!/^[a-zA-Z\s]+$/.test(value)) return 'City should contain only letters';
+                    return null;
+                },
+                state: (value) => {
+                    if (!value || value.trim().length === 0) return 'State is required';
+                    if (!/^[a-zA-Z\s]+$/.test(value)) return 'State should contain only letters';
+                    return null;
+                },
+                zipCode: (value) => {
+                    if (!value || value.trim().length === 0) return 'ZIP code is required';
+                    if (!/^\d{6}$/.test(value)) return 'Please enter a valid 6-digit PIN code';
+                    return null;
+                },
+                phone: (value) => {
+                    if (!value || value.trim().length === 0) return 'Phone number is required';
+                    if (!/^[6-9]\d{9}$/.test(value)) return 'Please enter a valid 10-digit Indian mobile number';
+                    return null;
+                }
+            };
+
+            function validateField(fieldId, value) {
+                const validator = validators[fieldId];
+                if (!validator) return true;
+
+                const error = validator(value);
+                const input = document.getElementById(fieldId);
+                const errorMsg = document.getElementById(`${fieldId}-error-msg`);
+                const successIcon = document.getElementById(`${fieldId}-success`);
+                const errorIcon = document.getElementById(`${fieldId}-error`);
+
+                if (error) {
+                    input.classList.add('invalid');
+                    input.classList.remove('valid');
+                    errorMsg.textContent = error;
+                    errorMsg.classList.add('show');
+                    if (successIcon) successIcon.style.display = 'none';
+                    if (errorIcon) errorIcon.style.display = 'block';
+                    return false;
+                } else {
+                    input.classList.remove('invalid');
+                    input.classList.add('valid');
+                    errorMsg.classList.remove('show');
+                    if (successIcon) successIcon.style.display = 'block';
+                    if (errorIcon) errorIcon.style.display = 'none';
+                    return true;
+                }
+            }
+
+            // Add real-time validation
+            ['fullName', 'address', 'city', 'state', 'zipCode', 'phone'].forEach(fieldId => {
+                const input = document.getElementById(fieldId);
+                if (!input) return;
+
+                input.addEventListener('input', () => validateField(fieldId, input.value));
+                input.addEventListener('blur', () => validateField(fieldId, input.value));
+            });
+
+            function validateAllFields() {
+                let isValid = true;
+                ['fullName', 'address', 'city', 'state', 'zipCode', 'phone'].forEach(fieldId => {
+                    const input = document.getElementById(fieldId);
+                    if (!validateField(fieldId, input.value)) {
+                        isValid = false;
+                    }
+                });
+                return isValid;
+            }
+
+            // Form submission
+            document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                if (!validateAllFields()) {
+                    alert('Please fix all errors before continuing');
+                    const firstError = document.querySelector('.form-control.invalid');
+                    if (firstError) {
+                        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        firstError.focus();
+                    }
+                    return;
+                }
+
+                const submitBtn = document.getElementById('continueBtn');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Processing...';
+                
+                this.submit();
+            });
+        });
+    </script>
+</body>
+</html>

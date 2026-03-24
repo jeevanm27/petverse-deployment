@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation - PetVerse</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/homepage.css">
+    <link rel="stylesheet" href="/css/order-confirmation.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .order-progress {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 30px 0;
+        }
+
+        .order-progress-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #10b981;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+        }
+
+        .order-progress-icon i {
+            font-size: 30px;
+            color: white;
+        }
+
+        .order-progress-text h3 {
+            font-size: 1.4rem;
+            color: #10b981;
+            margin-bottom: 5px;
+        }
+
+        .order-progress-text p {
+            color: #4b5563;
+            margin: 0;
+        }
+
+        .order-number {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 10px;
+        }
+
+        .tracking-info {
+            background-color: #f9fafb;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #e5e7eb;
+        }
+
+        .tracking-info h3 {
+            font-size: 1.2rem;
+            color: #111827;
+            margin-bottom: 15px;
+        }
+
+        .tracking-steps {
+            position: relative;
+        }
+
+        .tracking-step {
+            display: flex;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .tracking-step:last-child {
+            margin-bottom: 0;
+        }
+
+        .tracking-step::before {
+            content: "";
+            position: absolute;
+            top: 30px;
+            left: 15px;
+            bottom: -30px;
+            width: 2px;
+            background-color: #e5e7eb;
+            z-index: 1;
+        }
+
+        .tracking-step:last-child::before {
+            display: none;
+        }
+
+        .tracking-step.completed::before {
+            background-color: #10b981;
+        }
+
+        .tracking-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .tracking-icon i {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .tracking-step.completed .tracking-icon {
+            background-color: #10b981;
+        }
+
+        .tracking-step.completed .tracking-icon i {
+            color: white;
+        }
+
+        .tracking-content {
+            flex: 1;
+        }
+
+        .tracking-title {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 5px;
+        }
+
+        .tracking-date {
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        .what-happens-next {
+            background-color: #fff8f3;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #ffedd5;
+        }
+
+        .what-happens-next h3 {
+            font-size: 1.2rem;
+            color: #FF6B01;
+            margin-bottom: 15px;
+        }
+
+        .what-happens-next ul {
+            padding-left: 20px;
+            margin: 0;
+        }
+
+        .what-happens-next li {
+            margin-bottom: 10px;
+            color: #4b5563;
+        }
+
+        .what-happens-next li:last-child {
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('partials/header') %>
+
+    <div class="confirmation-container">
+        <div class="confirmation-card">
+            <i class="fa fa-check-circle success-icon"></i>
+            <h1 class="confirmation-title">Thank you for your order!</h1>
+            <p class="confirmation-message">Your order has been received and is being processed. You will receive an email confirmation shortly.</p>
+            
+            <div class="order-number" id="orderNumber"><%= orderId %></div>
+            
+            <div class="order-progress">
+                <div class="order-progress-icon">
+                    <i class="fa fa-check"></i>
+                </div>
+                <div class="order-progress-text">
+                    <h3>Order Confirmed</h3>
+                    <p id="orderDate"></p>
+                </div>
+            </div>
+            
+            <div class="tracking-info">
+                <h3>Order Status</h3>
+                <div class="tracking-steps">
+                    <div class="tracking-step completed">
+                        <div class="tracking-icon">
+                            <i class="fa fa-check"></i>
+                        </div>
+                        <div class="tracking-content">
+                            <div class="tracking-title">Order Placed</div>
+                            <div class="tracking-date" id="orderPlacedDate"></div>
+                        </div>
+                    </div>
+                    <div class="tracking-step">
+                        <div class="tracking-icon">
+                            <i class="fa fa-clock-o"></i>
+                        </div>
+                        <div class="tracking-content">
+                            <div class="tracking-title">Processing</div>
+                            <div class="tracking-date" id="processingDate"></div>
+                        </div>
+                    </div>
+                    <div class="tracking-step">
+                        <div class="tracking-icon">
+                            <i class="fa fa-truck"></i>
+                        </div>
+                        <div class="tracking-content">
+                            <div class="tracking-title">Shipping</div>
+                            <div class="tracking-date" id="shippingDate"></div>
+                        </div>
+                    </div>
+                    <div class="tracking-step">
+                        <div class="tracking-icon">
+                            <i class="fa fa-home"></i>
+                        </div>
+                        <div class="tracking-content">
+                            <div class="tracking-title">Delivery</div>
+                            <div class="tracking-date" id="deliveryDate"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="what-happens-next">
+                <h3>What Happens Next?</h3>
+                <ul>
+                    <li>We're preparing your order for shipment.</li>
+                    <li>You'll receive an email when your order ships with tracking information.</li>
+                    <li>You can track your order status anytime in your account.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-secondary" onclick="window.location.href = '/products'">Continue Shopping</button>
+            <button class="btn" onclick="window.location.href = '/'">Back to Home</button>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>
+</body>
+<script>
+        // Compute dates and fill in the placeholders
+        document.addEventListener('DOMContentLoaded', () => {
+            const now = new Date();
+
+            const formatDate = (date) => {
+                return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            };
+
+            document.getElementById('orderDate').textContent = formatDate(now);
+            document.getElementById('orderPlacedDate').textContent = formatDate(now);
+
+            const processing = new Date(now);
+            processing.setDate(now.getDate() + 1);
+            document.getElementById('processingDate').textContent = `Estimated: ${formatDate(processing)}`;
+
+            const shipping = new Date(now);
+            shipping.setDate(now.getDate() + 2);
+            document.getElementById('shippingDate').textContent = `Estimated: ${formatDate(shipping)}`;
+
+            const delivery = new Date(now);
+            delivery.setDate(now.getDate() + 5);
+            document.getElementById('deliveryDate').textContent = `Estimated: ${formatDate(delivery)}`;
+        });
+    </script>
+</html>

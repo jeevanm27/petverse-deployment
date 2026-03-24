@@ -1,0 +1,51 @@
+module.exports = (req, res, next) => {
+    // Add cache control headers to prevent caching
+    res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+    res.header('Pragma', 'no-cache');
+    res.header('Expires', '0');
+    
+    // Check if user exists in request (populated from session)
+    if (!req.user) {
+        console.log('No user found in request');
+        // Check if it's an API request
+        if (req.originalUrl.startsWith('/api/')) {
+            return res.status(401).json({
+                success: false,
+                error: 'Authentication required'
+            });
+        }
+        return res.redirect('/login');
+    }
+    
+    // Check if user is a seller or admin
+    if (req.user.role === 'seller' || req.user.role === 'admin') {
+        // If seller, check if approved
+        if (req.user.role === 'seller' && !req.user.isApproved) {
+            console.log('Unapproved seller attempted access:', req.user.email);
+            if (req.originalUrl.startsWith('/api/')) {
+                return res.status(403).json({
+                    success: false,
+                    error: 'Your seller account is pending admin approval',
+                    needsApproval: true
+                });
+            }
+            return res.status(403).render('error', { 
+                message: 'Your seller account is pending admin approval. Please wait for approval.' 
+            });
+        }
+        console.log('Seller/Admin authenticated:', req.user.email);
+        return next();
+    }
+    
+    console.log('Not a seller or admin:', req.user.role);
+    // Check if it's an API request
+    if (req.originalUrl.startsWith('/api/')) {
+        return res.status(403).json({
+            success: false,
+            error: 'Seller or admin access required'
+        });
+    }
+    res.status(403).render('error', { 
+        message: 'Seller access required. Please ensure your account is approved.' 
+    });
+};

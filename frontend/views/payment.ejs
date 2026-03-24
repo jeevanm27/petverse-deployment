@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - PetVerse</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/homepage.css">
+    <link rel="stylesheet" href="/css/checkout.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .checkout-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .checkout-steps::before {
+            content: "";
+            position: absolute;
+            top: 15px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background-color: #e5e7eb;
+            z-index: 1;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-number {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background-color: #e5e7eb;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .step-title {
+            font-size: 0.9rem;
+            color: #6b7280;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .step.active .step-number {
+            background-color: #FF6B01;
+            color: white;
+        }
+
+        .step.active .step-title {
+            color: #FF6B01;
+            font-weight: 600;
+        }
+
+        .step.completed .step-number {
+            background-color: #10b981;
+            color: white;
+        }
+
+        .payment-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .payment-method {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .payment-method:hover {
+            border-color: #FF6B01;
+        }
+
+        .payment-method.selected {
+            border-color: #FF6B01;
+            background-color: #fff8f5;
+        }
+
+        .payment-method-icon {
+            font-size: 1.5rem;
+            color: #6b7280;
+            min-width: 28px;
+            text-align: center;
+        }
+
+        .payment-method-details {
+            display: none;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e5e7eb;
+            width: 100%;
+        }
+
+        .payment-method.selected .payment-method-details {
+            display: block;
+        }
+
+        .card-input-container {
+            position: relative;
+        }
+
+        .card-number-input {
+            padding-right: 50px;
+        }
+
+        .card-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            color: #6b7280;
+        }
+
+        .secure-badge {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #10b981;
+            margin-top: 15px;
+        }
+
+        .secure-badge i {
+            margin-right: 5px;
+        }
+
+        /* Order Item Styles - Match checkout page */
+        .order-item {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            align-items: flex-start;
+        }
+        
+        .order-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        
+        .order-item-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            margin-right: 15px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+        
+        .order-item-details {
+            flex: 1;
+        }
+        
+        .order-item-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+            margin: 0 0 8px 0;
+            line-height: 1.3;
+        }
+        
+        .order-item-meta {
+            font-size: 0.85rem;
+            color: #666;
+            margin: 0 0 8px 0;
+            line-height: 1.4;
+        }
+        
+        .order-item-quantity {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #555;
+        }
+        
+        .order-item-price {
+            font-weight: 600;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header" id="header">
+        <nav id="navbar" class="navbar">
+            <div class="nav-content">
+                <div class="logo"><a href="/"><i class="fa fa-paw"></i> PetVerse</a></div>
+                <div class="nav-icons">
+                    <button onclick="window.location.href='/cart'" class="icon-btn"><i class="fa fa-shopping-cart"></i></button>
+                    <button onclick="window.location.href='/login'"class="icon-btn"><i class="fa fa-user"></i></button>
+                </div>
+                <div class="search">
+                    <input class="search-bar" type="text" placeholder=" Search pets, products or services">
+                    <button class="search-btn"><i class="fa fa-search"></i></button>
+                </div>
+                <button class="hamburger" id="hamburger">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/pets">Pets</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle">Products <i class="fa fa-angle-down"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/products/petfood">Pet Food</a></li>
+                            <li><a href="/products/toys">Toys</a></li>
+                            <li><a href="/products/accessories">Accessories</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle">Services <i class="fa fa-angle-down"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/services">Services</a></li>
+                            <li><a href="/mate">PetMate</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <div class="checkout-container">
+        <h1 class="section-title" style="font-size: 2rem; border-bottom: none;">Checkout</h1>
+        
+        <!-- Checkout Steps -->
+        <div class="checkout-steps">
+            <div class="step completed" id="step1">
+                <div class="step-number"><i class="fa fa-check"></i></div>
+                <div class="step-title">Shipping</div>
+            </div>
+            <div class="step active" id="step2">
+                <div class="step-number">2</div>
+                <div class="step-title">Payment</div>
+            </div>
+            <div class="step" id="step3">
+                <div class="step-number">3</div>
+                <div class="step-title">Review</div>
+            </div>
+        </div>
+
+        <div class="checkout-grid">
+            <div class="checkout-form-container">
+                <!-- Payment Information -->
+                <div class="checkout-form">
+                    <h2 class="section-title">Payment Method</h2>
+                    <div class="payment-methods">
+                        <!-- PetVerse Wallet -->
+                        <div class="payment-method selected" onclick="selectPaymentMethod(this, 'wallet')">
+                            <input type="radio" name="payment-method" id="wallet" checked>
+                            <i class="fa fa-wallet payment-method-icon" style="color: #10b981;"></i>
+                            <div>
+                                <div style="font-weight: 500;">PetVerse Wallet</div>
+                                <div style="font-size: 0.9rem; color: #6b7280;">Balance: ₹<%= wallet.balance.toFixed(2) %></div>
+                                <div hidden id="walletBalance"><%= wallet.balance %></div>
+                            </div>
+                        </div>
+
+                        <!-- Credit Card -->
+                        <div class="payment-method" onclick="selectPaymentMethod(this, 'credit-card')">
+                            <input type="radio" name="payment-method" id="credit-card">
+                            <i class="fa fa-credit-card payment-method-icon"></i>
+                            <div>
+                                <div style="font-weight: 500;">Credit / Debit Card</div>
+                                <div style="font-size: 0.9rem; color: #6b7280;">Pay securely with your card</div>
+                            </div>
+                            <div class="payment-method-details">
+                                <div class="form-group">
+                                    <label for="cardName">Name on Card</label>
+                                    <input type="text" id="cardName" class="form-control" placeholder="Enter name on card">
+                                </div>
+                                <div class="form-group card-input-container">
+                                    <label for="cardNumber">Card Number</label>
+                                    <input type="text" id="cardNumber" class="form-control card-number-input" placeholder="1234 5678 9012 3456">
+                                    <div class="card-icon">
+                                        <i class="fa fa-cc-visa"></i>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="expiryDate">Expiry Date</label>
+                                        <input type="text" id="expiryDate" class="form-control" placeholder="MM/YY">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="cvv">CVV</label>
+                                        <input type="text" id="cvv" class="form-control" placeholder="123">
+                                    </div>
+                                </div>
+                                <div class="secure-badge">
+                                    <i class="fa fa-lock"></i> Your payment information is secure
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- UPI -->
+                        <div class="payment-method" onclick="selectPaymentMethod(this, 'upi')">
+                            <input type="radio" name="payment-method" id="upi">
+                            <i class="fa fa-mobile payment-method-icon" style="font-size: 1.8rem;"></i>
+                            <div>
+                                <div style="font-weight: 500;">UPI</div>
+                                <div style="font-size: 0.9rem; color: #6b7280;">Pay using UPI apps like Google Pay, PhonePe, Paytm</div>
+                            </div>
+                            <div class="payment-method-details">
+                                <div class="form-group">
+                                    <label for="upiId">UPI ID</label>
+                                    <input type="text" id="upiId" class="form-control" placeholder="yourname@upi">
+                                </div>
+                                <div style="display: flex; gap: 12px; margin-top: 16px;">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Google_Pay_Logo.svg/512px-Google_Pay_Logo.svg.png" alt="Google Pay" style="height: 30px;">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Paytm_Logo_%28standalone%29.svg/512px-Paytm_Logo_%28standalone%29.svg.png" alt="Paytm" style="height: 30px;">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/PhonePe_Logo.png/640px-PhonePe_Logo.png" alt="PhonePe" style="height: 30px;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cash on Delivery -->
+                        <div class="payment-method" onclick="selectPaymentMethod(this, 'cod')">
+                            <input type="radio" name="payment-method" id="cod">
+                            <i class="fa fa-money payment-method-icon"></i>
+                            <div>
+                                <div style="font-weight: 500;">Cash on Delivery</div>
+                                <div style="font-size: 0.9rem; color: #6b7280;">Pay when you receive your order</div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="checkout-navigation">
+                        <button onclick="window.location.href='/checkout'" class="btn btn-secondary" id="backToShippingBtn">Back to Shipping</button>
+                        <button onclick="window.location.href='/order-confirmation'" class="btn" id="toReviewBtn">Proceed Payment</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="checkout-summary">
+                <h2 class="section-title">Order Summary</h2>
+                <div class="order-items" id="orderItems">
+                    <!-- Order items will be populated by JavaScript -->
+                </div>
+                <div class="summary-item">
+                    <span>Subtotal</span>
+                    <span id="subtotal">₹0.00</span>
+                </div>
+                <div class="summary-item">
+                    <span>Shipping</span>
+                    <span id="shipping">₹0.00</span>
+                </div>
+                <div class="summary-item">
+                    <span>Tax (10%)</span>
+                    <span id="tax">₹0.00</span>
+                </div>
+                <div class="summary-total">
+                    <span>Total</span>
+                    <span id="total">₹0.00</span>
+                </div>
+                <div style="margin-top: 20px; padding: 15px; background-color: #f0fdf4; border-radius: 8px; border: 1px solid #dcfce7;">
+                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <i class="fa fa-shield" style="color: #10b981; margin-right: 10px; font-size: 1.2rem;"></i>
+                        <span style="font-weight: 500; color: #10b981;">Secure Checkout</span>
+                    </div>
+                    <p style="font-size: 0.9rem; color: #4b5563; margin: 0;">Your payment information is encrypted and secure.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer id="footer">
+        <div class="footer-container">
+            <div class="footer-logo">
+                <h2>PetVerse</h2>
+                <p>Your one-stop destination for all pet needs</p>
+            </div>
+            <div class="footer-links">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Shop</a></li>
+                    <li><a href="#">Services</a></li>
+                    <li><a href="#">Events</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-social">
+                <h3>Follow Us</h3>
+                <a href="https://facebook.com" target="_blank" class="social-icon">Facebook</a>
+                <a href="https://instagram.com" target="_blank" class="social-icon">Instagram</a>
+                <a href="https://twitter.com" target="_blank" class="social-icon">Twitter</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 PetVerse. All Rights Reserved</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        // Use server-side cart data
+        const cartData = <%- JSON.stringify(cart) %>;
+        
+        // Update order summary with server-side values
+        document.getElementById('subtotal').textContent = `₹${cartData.subtotal.toFixed(2)}`;
+        document.getElementById('shipping').textContent = cartData.shipping === 0 ? 
+            'Free' : `₹${cartData.shipping.toFixed(2)}`;
+        document.getElementById('tax').textContent = `₹${cartData.tax.toFixed(2)}`;
+        document.getElementById('total').textContent = `₹${cartData.total.toFixed(2)}`;
+
+        // Populate order items
+        populateOrderItems(cartData.items);
+
+
+
+        // Function to populate order items
+        function populateOrderItems(items) {
+            const orderItemsContainer = document.getElementById('orderItems');
+            orderItemsContainer.innerHTML = '';
+
+            if (items.length === 0) {
+                orderItemsContainer.innerHTML = '<p>Your cart is empty</p>';
+                document.getElementById('toReviewBtn').disabled = true;
+                return;
+            }
+
+            items.forEach(item => {
+                const orderItemElement = document.createElement('div');
+                orderItemElement.className = 'order-item';
+                
+                // Use a placeholder SVG if no image
+                const imageSrc = item.image_url || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80"%3E%3Crect width="80" height="80" fill="%23f3f4f6"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="14" fill="%236b7280"%3ENo Image%3C/text%3E%3C/svg%3E';
+                
+                orderItemElement.innerHTML = `
+                    <img src="${imageSrc}" alt="${item.name}" class="order-item-image">
+                    <div class="order-item-details">
+                        <h4 class="order-item-name">${item.name}</h4>
+                        <p class="order-item-meta">Brand: <strong>${item.brand || 'N/A'}</strong></p>
+                        <div class="order-item-quantity">
+                            <span>Quantity: ${item.quantity}</span>
+                            <span class="order-item-price">₹${item.price.toLocaleString()}</span>
+                        </div>
+                    </div>
+                `;
+                orderItemsContainer.appendChild(orderItemElement);
+            });
+        }
+
+        // Update payment validation
+        function validatePaymentInfo() {
+            const paymentMethod = document.querySelector('input[name="payment-method"]:checked').id;
+            
+            if (paymentMethod === 'wallet') {
+                const walletBalance = parseFloat(document.getElementById('walletBalance').textContent);
+                if (walletBalance < cartData.total) {
+                    alert('Insufficient wallet balance');
+                    return false;
+                }
+                return true;
+            }
+            
+            // Existing validation for other methods
+            // ...
+        }
+
+        // Update payment method selection
+        function selectPaymentMethod(element, method) {
+            document.querySelectorAll('.payment-method').forEach(el => {
+                el.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            document.getElementById(method).checked = true;
+
+            // Update wallet balance color dynamically
+            if (method === 'wallet') {
+                const walletBalance = parseFloat(document.getElementById('walletBalance').textContent);
+                const walletBalanceElement = element.querySelector('.payment-method-icon');
+                walletBalanceElement.style.color = walletBalance >= cartData.total ? 
+                    '#10b981' : 
+                    '#e53e3e';
+            }
+        }
+    });
+
+    document.getElementById('toReviewBtn').addEventListener('click', async function(e) {
+    e.preventDefault();
+
+    try {
+        const paymentMethod = document.querySelector('input[name="payment-method"]:checked').id;
+
+        const response = await fetch('/payment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ paymentMethod })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            localStorage.removeItem('cart');
+            localStorage.removeItem('shippingInfo');
+            window.location.href = result.redirectUrl;  // Use backend-provided redirect
+        } else {
+            alert(`Payment failed: ${result.message}`);
+        }
+    } catch (err) {
+        console.error('Payment error:', err);
+        alert('Payment processing failed. Please try again.');
+    }
+});
+
+        function updateCartCount() {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            let totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            
+            // If there's a cart count element, update it
+            let cartCountElement = document.querySelector('.cart-count');
+            if (cartCountElement) {
+                cartCountElement.textContent = totalItems;
+                cartCountElement.style.display = totalItems > 0 ? 'inline-block' : 'none';
+            }
+        }
+
+
+        function loadShippingInfo() {
+            // This would load shipping info from localStorage if available
+            // to maintain state between checkout steps
+            const checkoutData = JSON.parse(localStorage.getItem('checkoutData')) || {};
+        }
+
+        function savePaymentInfo() {
+            const paymentMethod = document.querySelector('input[name="payment-method"]:checked').id;
+            
+            let paymentDetails = {};
+            if (paymentMethod === 'credit-card') {
+                paymentDetails = {
+                    cardName: document.getElementById('cardName').value,
+                    cardNumber: document.getElementById('cardNumber').value,
+                    expiryDate: document.getElementById('expiryDate').value,
+                    cvv: document.getElementById('cvv').value
+                };
+            } else if (paymentMethod === 'upi') {
+                paymentDetails = {
+                    upiId: document.getElementById('upiId').value
+                };
+            }
+
+            // Get existing checkout data or initialize new object
+            const checkoutData = JSON.parse(localStorage.getItem('checkoutData')) || {};
+            
+            // Update with payment information
+            checkoutData.payment = {
+                method: paymentMethod,
+                details: paymentDetails
+            };
+            
+            // Save back to localStorage
+            localStorage.setItem('checkoutData', JSON.stringify(checkoutData));
+        }
+
+        function validatePaymentInfo() {
+            const paymentMethod = document.querySelector('input[name="payment-method"]:checked').id;
+            
+            // For wallet payments
+            if (paymentMethod === 'wallet') {
+                const walletBalance = parseFloat(document.getElementById('walletBalance').textContent);
+                
+                if (walletBalance < cartData.total) {
+                    alert('Insufficient wallet balance');
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+
+        function selectPaymentMethod(element, method) {
+            // Remove selected class from all payment methods
+            document.querySelectorAll('.payment-method').forEach(el => {
+                el.classList.remove('selected');
+            });
+
+            // Add selected class to clicked payment method
+            element.classList.add('selected');
+
+            // Check the radio button
+            document.getElementById(method).checked = true;
+        }
+    </script>
+</body>
+</html>

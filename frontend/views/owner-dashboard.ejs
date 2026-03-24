@@ -1,0 +1,1950 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetVerse Buyer Dashboard</title>
+    <link rel="stylesheet" href="/css/homepage.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="icon" href="/images/icon.jpg">
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        :root {
+            --primary: rgb(0,180,180);
+            --primary-dark: teal;
+            --secondary: #10B981;
+            --accent: #F59E0B;
+            --danger: #EF4444;
+            --warning: #F59E0B;
+            --success: #10B981;
+            --background: #F8FAFC;
+            --surface: #FFFFFF;
+            --text-primary: #111827;
+            --text-secondary: #4B5563;
+            --text-tertiary: #6B7280;
+
+            /* Spacing */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+
+            /* Border Radius */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-full: 9999px;
+        }
+
+        body {
+            background-color: var(--background);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .dashboard-container {
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header Styles */
+        .header {
+            background: var(--surface);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .header-title .petverse {
+            color: #4F46E5;
+        }
+
+        .header-title .dashboard-text {
+            color: #10B981;
+        }
+
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .user-name {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: red;
+            color: white;
+            border-radius: 9999px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            background: red;
+            transform: translateY(-1px);
+        }
+
+        .dashboard-header {
+            background: var(--surface);
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .stat-card {
+            background: var(--surface);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-icon {
+            font-size: 1.5rem;
+            margin-bottom: var(--spacing-sm);
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            color: transparent;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-full);
+            background-color: rgba(79, 70, 229, 0.1);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .stat-label {
+            color: var(--text-tertiary);
+            font-size: 0.875rem;
+        }
+
+        /* Section Styles */
+        .section {
+            background: var(--surface);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: var(--spacing-xl);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* User Profile Section */
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            background-color: rgba(243, 244, 246, 0.5);
+            border-radius: var(--radius-md);
+            transition: all 0.3s ease;
+        }
+
+        .info-item:hover {
+            background-color: rgba(243, 244, 246, 0.8);
+            transform: translateX(4px);
+        }
+
+        .info-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary);
+            color: white;
+            border-radius: var(--radius-full);
+            font-size: 1.2rem;
+        }
+
+        .info-content {
+            flex: 1;
+        }
+
+        .info-label {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Orders Table */
+        .orders-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: var(--spacing-lg);
+        }
+
+        .orders-table th {
+            background-color: rgba(243, 244, 246, 0.5);
+            padding: var(--spacing-md);
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .orders-table td {
+            padding: var(--spacing-md);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .orders-table tr:hover {
+            background-color: rgba(243, 244, 246, 0.3);
+        }
+
+        .order-product {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .product-image {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            object-fit: cover;
+        }
+
+        .product-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .product-meta {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .status-badge.pending {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .status-badge.processing {
+            background-color: rgba(79, 70, 229, 0.1);
+            color: var(--primary);
+        }
+
+        .status-badge.delivered {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        /* Featured Products */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+        }
+
+        .product-card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .product-image-wrapper {
+            position: relative;
+            padding-top: 75%;
+            overflow: hidden;
+        }
+
+        .product-image-wrapper img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover .product-image-wrapper img {
+            transform: scale(1.05);
+        }
+
+        .product-details {
+            padding: var(--spacing-lg);
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: space-between;
+        }
+
+        .product-info {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .product-category {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background-color: rgba(79, 70, 229, 0.1);
+            color: var(--primary);
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .product-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-sm);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .product-price {
+            display: flex;
+            align-items: baseline;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .current-price {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .original-price {
+            font-size: 1rem;
+            color: var(--text-tertiary);
+            text-decoration: line-through;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+            justify-content: space-between;
+        }
+
+        .btn {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-full);
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            flex: 1;
+            justify-content: center;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: rgba(79, 70, 229, 0.1);
+            color: var(--primary);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn i {
+            font-size: 1.1rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: var(--spacing-md);
+                text-align: center;
+            }
+
+            .user-info {
+                flex-direction: column;
+            }
+
+            .orders-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .product-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-card,
+        .product-card {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #FF6B01;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 50%;
+            font-size: 0.75rem;
+        }
+
+    
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hamburger {
+                display: block;
+            }
+
+            .search {
+                margin: 0 1rem;
+            }
+        }
+
+        .service-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--secondary);
+            color: white;
+            border-radius: var(--radius-full);
+            font-size: 1.2rem;
+            margin-right: var(--spacing-md);
+        }
+
+        .empty-state {
+            padding: var(--spacing-xl);
+            text-align: center;
+            background-color: rgba(243, 244, 246, 0.5);
+            border-radius: var(--radius-md);
+            margin-top: var(--spacing-lg);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: var(--text-tertiary);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .empty-state p {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .status-badge.confirmed {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        /* Service Appointment Styles */
+        .service-section {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-section::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 150px;
+            height: 150px;
+            background-color: rgba(16, 185, 129, 0.05);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .service-icon {
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--secondary), #34D399);
+            color: white;
+            border-radius: var(--radius-full);
+            font-size: 1.2rem;
+            margin-right: var(--spacing-md);
+            box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .order-product:hover .service-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .empty-state {
+            padding: var(--spacing-xl) var(--spacing-xl) calc(var(--spacing-xl) * 1.5);
+            text-align: center;
+            background: linear-gradient(135deg, rgba(243, 244, 246, 0.5), rgba(249, 250, 251, 0.8));
+            border-radius: var(--radius-lg);
+            margin: var(--spacing-lg) auto;
+            max-width: 500px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(229, 231, 235, 0.7);
+        }
+
+        .empty-state::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 100px;
+            height: 100px;
+            background-color: rgba(16, 185, 129, 0.05);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .empty-state i {
+            font-size: 4.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: var(--spacing-md);
+            display: inline-block;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .empty-state p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-lg);
+            max-width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .empty-state .btn.btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 12px 24px;
+            font-weight: 600;
+            border-radius: 50px;
+            box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .empty-state .btn.btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+        }
+
+        .empty-state .btn.btn-primary i {
+            font-size: 1.1rem;
+            background: none;
+            -webkit-background-clip: unset;
+            color: white;
+            animation: none;
+            margin-bottom: 0;
+        }
+
+        .status-badge.confirmed {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(52, 211, 153, 0.2));
+            color: var(--success);
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 50px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 5px rgba(16, 185, 129, 0.1);
+        }
+
+        .service-appointment-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .service-appointment-table th {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(52, 211, 153, 0.1));
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 2px solid rgba(16, 185, 129, 0.1);
+            position: relative;
+        }
+
+        .service-appointment-table th:first-child {
+            border-top-left-radius: var(--radius-md);
+        }
+
+        .service-appointment-table th:last-child {
+            border-top-right-radius: var(--radius-md);
+        }
+
+        .service-appointment-table td {
+            padding: 16px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .service-appointment-table tr:hover td {
+            background-color: rgba(16, 185, 129, 0.02);
+            transform: translateX(4px);
+        }
+
+        .service-appointment-table tr:last-child td:first-child {
+            border-bottom-left-radius: var(--radius-md);
+        }
+
+        .service-appointment-table tr:last-child td:last-child {
+            border-bottom-right-radius: var(--radius-md);
+        }
+
+        .date-badge, .time-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .date-badge {
+            background-color: rgba(79, 70, 229, 0.08);
+            color: #4F46E5;
+        }
+
+        .time-badge {
+            background-color: rgba(245, 158, 11, 0.08);
+            color: #F59E0B;
+        }
+
+        .date-badge i, .time-badge i {
+            font-size: 0.9rem;
+        }
+
+        .service-appointment-table tr:hover .date-badge {
+            background-color: rgba(79, 70, 229, 0.12);
+        }
+
+        .service-appointment-table tr:hover .time-badge {
+            background-color: rgba(245, 158, 11, 0.12);
+        }
+
+        /* Orders Section Styles */
+        .orders-container {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-md);
+        }
+
+        .order-card {
+            border: 1px solid #e5e7eb;
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-lg);
+            overflow: hidden;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-md);
+            background-color: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .order-info h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+        }
+
+        .order-date {
+            margin: 4px 0 0;
+            font-size: 0.9rem;
+            color: var(--text-tertiary);
+        }
+
+        .order-status {
+            padding: 4px 12px;
+            border-radius: var(--radius-full);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .order-status.pending { background-color: #FEF3C7; color: #92400E; }
+        .order-status.processing { background-color: #DBEAFE; color: #1E40AF; }
+        .order-status.shipped { background-color: #D1FAE5; color: #065F46; }
+        .order-status.delivered { background-color: #D1FAE5; color: #065F46; }
+        .order-status.cancelled { background-color: #FEE2E2; color: #991B1B; }
+
+        .order-items {
+            padding: var(--spacing-md);
+        }
+
+        .order-item {
+            display: flex;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md) 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .order-item-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: var(--radius-sm);
+        }
+
+        .order-item-details h4 {
+            margin: 0 0 8px;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+
+        .order-item-details p {
+            margin: 4px 0;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-md);
+            background-color: #f9fafb;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .order-total {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .order-total span:last-child {
+            margin-left: 8px;
+            color: var(--primary);
+        }
+
+        .order-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .no-data {
+            text-align: center;
+            padding: var(--spacing-xl);
+            color: var(--text-tertiary);
+            font-style: italic;
+        }
+        
+        .dashboard-header {
+            margin-top: 40px;
+        }
+
+        /* Real-time notification styles */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            min-width: 300px;
+            max-width: 500px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .notification-success {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+        
+        .notification-error {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+            color: white;
+        }
+        
+        .notification-warning {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            color: white;
+        }
+        
+        .notification-info {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
+        }
+        
+        .notification-content {
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .notification-message {
+            flex: 1;
+            font-weight: 500;
+        }
+        
+        .notification-close {
+            background: none;
+            border: none;
+            color: inherit;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0;
+            margin-left: 10px;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+        
+        .notification-close:hover {
+            opacity: 1;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* Real-time connection indicator */
+        .connection-status {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            z-index: 1000;
+        }
+        
+        .connection-status.connected {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .connection-status.disconnected {
+            background: #f44336;
+            color: white;
+        }
+        
+        .connection-status.polling {
+            background: #ff9800;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('partials/header') %>
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <h1 class="header-title">
+                <span class="petverse">PetVerse</span>
+                <span class="dashboard-text">Buyer Dashboard</span>
+            </h1>
+            <div class="user-info">
+                <span class="user-name">Welcome, <%= user.username %></span>
+                <form action="/logout" method="POST" style="display: inline;">
+                    <button type="submit" class="nav-btn logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </button>
+                </form>
+            </div>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-shopping-bag"></i>
+                </div>
+                <div class="stat-value">
+                    <%= user.totalOrders %>
+                </div>
+                <div class="stat-label">Total Orders</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-value">
+                    <%= user.activeOrders %>
+                </div>
+                <div class="stat-label">Active Orders</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-rupee-sign"></i>
+                </div>
+                <div class="stat-value">₹<%= user.totalSpent.toLocaleString('en-IN') %>
+                </div>
+                <div class="stat-label">Total Spent</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-rupee-sign"></i>
+                </div>
+                <div class="stat-value">₹ <%= user.walletAmount %>
+                </div>
+                <div class="stat-label">Wallent Balance</div>
+            </div>
+        </div>
+
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-heart"></i>
+                    My Wishlist
+                </h2>
+            </div>
+            <div class="products-grid" style="display: flex; gap: 15px; overflow-x: auto; overflow-y: hidden; padding-bottom: 10px; scroll-behavior: smooth;">
+                <style>
+                    .products-grid::-webkit-scrollbar {
+                        height: 8px;
+                    }
+                    .products-grid::-webkit-scrollbar-track {
+                        background: #f1f1f1;
+                        border-radius: 4px;
+                    }
+                    .products-grid::-webkit-scrollbar-thumb {
+                        background: #888;
+                        border-radius: 4px;
+                    }
+                    .products-grid::-webkit-scrollbar-thumb:hover {
+                        background: #555;
+                    }
+                    .products-grid .product-card {
+                        min-width: 200px;
+                        flex-shrink: 0;
+                    }
+                </style>
+                <% if (wishlistedProducts && wishlistedProducts.length > 0) { %>
+                    <% wishlistedProducts.forEach(function(product) { %>
+                        <div class="product-card" style="background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s; display: flex; flex-direction: column; height: 430px;">
+                            <a href="/buy/<%= product._id %>" style="text-decoration: none; color: inherit; display: block; flex-grow: 1;">
+                                <div style="position: relative; width: 100%; padding-top: 100%;">
+                                    <% if (product.images && product.images.length > 0) { %>
+                                        <% if (product.images[0].url) { %>
+                                            <img src="<%= product.images[0].url %>" alt="<%= product.name %>" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" />
+                                        <% } else if (product.images[0].data) { %>
+                                            <img src="data:<%= product.images[0].contentType %>;base64,<%= product.images[0].data.toString('base64') %>" alt="<%= product.name %>" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" />
+                                        <% } else { %>
+                                            <img src="/images/default-product.jpg" alt="<%= product.name %>" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" />
+                                        <% } %>
+                                    <% } else { %>
+                                        <img src="/images/default-product.jpg" alt="<%= product.name %>" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" />
+                                    <% } %>
+                                </div>
+                                <div style="padding: 12px; display: flex; flex-direction: column; flex-grow: 1;">
+                                    <h3 style="font-size: 14px; font-weight: 600; color: #333; margin-bottom: 6px;"><%= product.name %></h3>
+                                    <p style="font-size: 12px; color: #666; margin-bottom: 8px;"><%= product.brand || 'Unknown Brand' %></p>
+                                    <p style="font-size: 12px; color: #666; margin-bottom: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; flex-grow: 1;"><%= product.description %></p>
+                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px; flex-wrap: wrap;">
+                                        <% if (product.discount > 0) { %>
+                                            <span style="color: #999; font-size: 11px; text-decoration: line-through;">₹<%= product.price.toFixed(2) %></span>
+                                            <span style="color: #017276; font-size: 15px; font-weight: 600;">₹<%= (product.price * (1 - product.discount/100)).toFixed(2) %></span>
+                                            <span style="background: #ff4444; color: white; padding: 1px 4px; border-radius: 3px; font-size: 10px; font-weight: 600;"><%= product.discount %>% OFF</span>
+                                        <% } else { %>
+                                            <span style="color: #017276; font-size: 15px; font-weight: 600;">₹<%= product.price.toFixed(2) %></span>
+                                        <% } %>
+                                    </div>
+                                    <div style="font-size: 11px; color: #10b981; margin-bottom: 0;">
+                                        <% if (product.stock === 0) { %>
+                                            <span style="color: #ef4444;">Out of Stock</span>
+                                        <% } else if (product.stock <= 5) { %>
+                                            Only <%= product.stock %> left!
+                                        <% } else { %>
+                                            In Stock
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </a>
+                            <div style="display: flex; gap: 8px; padding: 8px 12px 20px; margin-top: 0;">
+                                <button class="wishlist-add-to-cart" data-product-id="<%= product._id %>" style="flex: 1; padding: 8px; background: linear-gradient(135deg, #3b99c1 0%, #08a993 100%); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 12px; transition: background 0.2s;" <%= product.stock === 0 ? 'disabled' : '' %>>
+                                    Add to Cart
+                                </button>
+                                <button class="wishlist-remove-btn" data-product-id="<%= product._id %>" style="width: 32px; height: 32px; border: 1px solid #ddd; border-radius: 50%; background: white; color: #e41749; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; font-size: 12px;">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } %>
+                <% if (wishlistedPets && wishlistedPets.length > 0) { %>
+                    <% wishlistedPets.forEach(function(pet) { %>
+                        <div class="product-card" style="background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s; display: flex; flex-direction: column; height: 430px;">
+                            <a href="/seller/detail/<%= pet._id %>" style="text-decoration: none; color: inherit; display: block; flex-grow: 1;">
+                                <div style="position: relative; width: 100%; padding-top: 100%;">
+                                    <% if (pet.images && pet.images.length > 0) { %>
+                                        <% if (pet.images[0].url) { %>
+                                            <img src="<%= pet.images[0].url %>" alt="<%= pet.name %>" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" />
+                                        <% } else if (pet.images[0].data) { %>
+                                            <img src="data:<%= pet.images[0].contentType %>;base64,<%= pet.images[0].data.toString('base64') %>" alt="<%= pet.name %>" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" />
+                                        <% } else { %>
+                                            <img src="/images/default-pet.jpg" alt="<%= pet.name %>" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" />
+                                        <% } %>
+                                    <% } else { %>
+                                        <img src="/images/default-pet.jpg" alt="<%= pet.name %>" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" />
+                                    <% } %>
+                                </div>
+                                <div style="padding: 12px; display: flex; flex-direction: column; flex-grow: 1;">
+                                    <h3 style="font-size: 14px; font-weight: 600; color: #333; margin-bottom: 6px;"><%= pet.name %></h3>
+                                    <p style="font-size: 12px; color: #666; margin-bottom: 6px;"><%= pet.breed || pet.category %></p>
+                                    <p style="font-size: 11px; color: #666; margin-bottom: 8px; flex-grow: 1;">Age: <%= pet.age %> | <%= pet.gender %></p>
+                                    <div style="color: #017276; font-size: 15px; font-weight: 600; margin-bottom: 8px;">₹<%= pet.price.toFixed(2) %></div>
+                                    <div style="font-size: 11px; color: #10b981; margin-bottom: 0;">
+                                        <%= pet.available ? 'Available' : 'Not Available' %>
+                                    </div>
+                                </div>
+                            </a>
+                            <div style="display: flex; gap: 8px; padding: 8px 12px 20px; margin-top: 0;">
+                                <button onclick="window.location.href='/seller/detail/<%= pet._id %>'" style="flex: 1; padding: 8px; background: linear-gradient(135deg, #3b99c1 0%, #08a993 100%); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 12px;">
+                                    View Details
+                                </button>
+                                <button class="wishlist-remove-pet-btn" data-pet-id="<%= pet._id %>" style="width: 32px; height: 32px; border: 1px solid #ddd; border-radius: 50%; background: white; color: #e41749; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px;">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } %>
+                <% if ((!wishlistedProducts || wishlistedProducts.length === 0) && (!wishlistedPets || wishlistedPets.length === 0)) { %>
+                    <div class="empty-state" style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: #999;">
+                        <i class="fas fa-heart-broken" style="font-size: 4rem; margin-bottom: 1rem; color: #ddd;"></i>
+                        <p style="font-size: 1.1rem;">No items in your wishlist yet.</p>
+                    </div>
+                <% } %>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-ticket-alt"></i>
+                    Registered Events
+                </h2>
+            </div>
+
+            <% if (registeredEvents && registeredEvents.length > 0) { %>
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Event</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>City</th>
+                            <th>Ticket</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% registeredEvents.forEach(function(ev) { %>
+                            <tr>
+                                <td><%= ev.title %> <span class="product-meta" style="margin-left:8px;">(<%= ev.category %>)</span></td>
+                                <td><%= new Date(ev.date).toLocaleDateString() %></td>
+                                <td><%= ev.startTime %> - <%= ev.endTime %></td>
+                                <td><%= ev.city %></td>
+                                <td>
+                                    <a href="/events/<%= ev.id %>/ticket" class="btn btn-secondary">View Ticket</a>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            <% } else { %>
+                <div class="empty-state">
+                    <i class="fas fa-ticket-alt"></i>
+                    <p>No event registrations yet. Explore and join an event!</p>
+                    <a href="/events" class="btn btn-primary">
+                        <i class="fas fa-calendar"></i> Browse Events
+                    </a>
+                </div>
+            <% } %>
+        </section>
+
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-user-circle"></i>
+                    Profile Information
+                </h2>
+            </div>
+            <div class="profile-grid">
+                <div class="profile-info">
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Email Address</div>
+                            <div class="info-value">
+                                <%= user.email %>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Phone Number</div>
+                            <div class="info-value">
+                                <%= user.phone %>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Address</div>
+                            <div class="info-value">
+                                <%= user.address %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-info">
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-calendar"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Member Since</div>
+                            <div class="info-value">
+                                <%= user.joinedDate %>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Last Login</div>
+                            <div class="info-value">
+                                <%= user.lastLogin %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-shopping-cart"></i>
+                    Recent Orders
+                </h2>
+            </div>
+
+            <% if (orders && orders.length> 0) { %>
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Product</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% orders.forEach(function(order) { %>
+                            <% order.items.forEach(function(item) { %>
+                                <tr>
+                                    <td>#<%= order.orderNumber || order._id %></td>
+                                    <td>
+                                        <div class="order-product">
+                                            <% if (item.product && item.product.images && item.product.images.length > 0) { %>
+                                                <% if (item.product.images[0].url) { %>
+                                                    <img src="<%= item.product.images[0].url %>" alt="<%= item.product.name %>" class="product-image">
+                                                <% } else if (item.product.images[0].data) { %>
+                                                    <img src="data:<%= item.product.images[0].contentType %>;base64,<%= item.product.images[0].data.toString('base64') %>" alt="<%= item.product.name %>" class="product-image">
+                                                <% } else { %>
+                                                    <img src="/images/default-product.jpg" alt="No image" class="product-image">
+                                                <% } %>
+                                            <% } else { %>
+                                                <img src="/images/default-product.jpg" alt="No image" class="product-image">
+                                            <% } %>
+                                            <div class="product-info">
+                                                <% if (item.product) { %>
+                                                    <span class="product-name"><%= item.product.name %></span>
+                                                <% } else { %>
+                                                    <span class="product-name" style="color: #666;">Product No Longer Available</span>
+                                                <% } %>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <%= order.orderDate %>
+                                    </td>
+                                    <td>₹<%= order.totalAmount.toLocaleString('en-IN') %></td>
+                                    <td>
+                                        <span class="status-badge <%= order.status.toLowerCase() %>">
+                                            <i class="fas fa-<%= 
+                                                order.status === 'delivered' ? 'check-circle' :
+                                                order.status === 'processing' ? 'clock' :
+                                                'hourglass-half'
+                                            %>"></i>
+                                            <%= order.status %>
+                                        </span>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        <% }); %>
+                    </tbody>
+                </table>
+                <% } else { %>
+                    <div class="empty-state">
+                        <i class="fas fa-shopping-bag"></i>
+                        <p>No orders found. Start shopping!</p>
+                        <a href="/products" class="btn btn-primary">
+                            <i class="fas fa-shopping-cart"></i> Shop Now
+                        </a>
+                    </div>
+                    <% } %>
+        </section>
+
+        <section class="section service-section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-calendar-check"></i>
+                    Service Appointments
+                </h2>
+            </div>
+
+            <% if (bookings && bookings.length > 0) { %>
+                <table class="service-appointment-table">
+                    <thead>
+                        <tr>
+                            <th>Service ID</th>
+                            <th>Service Name</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% bookings.forEach(booking => { %>
+                            <tr>
+                                <td>#<%= booking.id.toString().substring(0, 8) %>...</td>
+                                <td>
+                                    <div class="order-product">
+                                        <div class="service-icon">
+                                            <i class="fas fa-<%= booking.serviceType === 'Grooming' ? 'cut' : 
+                                                               booking.serviceType === 'Veterinary' ? 'stethoscope' : 
+                                                               booking.serviceType === 'Training' ? 'dumbbell' : 'paw' %>"></i>
+                                        </div>
+                                        <div class="product-info">
+                                            <span class="product-name">
+                                                <%= booking.serviceName %>
+                                            </span>
+                                            <span class="product-meta">
+                                                Type: <%= booking.serviceType %>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="date-badge">
+                                        <i class="far fa-calendar-alt"></i>
+                                        <%= booking.date %>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="time-badge">
+                                        <i class="far fa-clock"></i>
+                                        <%= booking.time %>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="status-badge <%= booking.status.toLowerCase() %>">
+                                        <i class="fas fa-check-circle"></i>
+                                        <%= booking.status %>
+                                    </span>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            <% } else { %>
+                <div class="empty-state">
+                    <i class="fas fa-calendar-times"></i>
+                    <p>No appointments scheduled yet. Book a service for your pet today!</p>
+                    <a href="/services" class="btn btn-primary">
+                        <i class="fas fa-concierge-bell"></i> Browse Services
+                    </a>
+                </div>
+            <% } %>
+        </section>
+
+        <!-- Orders Section -->
+        <div class="dashboard-section" id="orders-section">
+            <h2 class="section-title">My Orders</h2>
+            <div class="orders-container">
+                <div class="orders-list" id="ordersList">
+                    <!-- Orders will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('partials/footer') %>
+    <script>
+        // Update cart count on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            updateCartCount();
+        });
+
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const cartCount = document.getElementById('cartCount');
+            if (cartCount) {
+                cartCount.textContent = totalItems;
+                cartCount.style.display = totalItems > 0 ? 'inline-block' : 'none';
+            }
+        }
+    </script>
+    <script>
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        });
+    </script>
+    
+    <script>
+    class RealTimeOrderManager {
+        constructor() {
+            this.socket = null;
+            this.pollingInterval = null;
+            this.isConnected = false;
+            this.retryCount = 0;
+            this.maxRetries = 5;
+            this.retryDelay = 1000; // 1 second
+            this.pollingIntervalMs = 30000; // 30 seconds
+            this.lastUpdateTime = null;
+            
+            this.init();
+        }
+        
+        init() {
+            this.connectSocket();
+            this.startPolling();
+            this.setupEventListeners();
+        }
+        
+        connectSocket() {
+            try {
+                this.socket = io();
+                
+                this.socket.on('connect', () => {
+                    this.isConnected = true;
+                    this.retryCount = 0;
+                    this.updateConnectionStatus('connected', 'Real-time Connected');
+                    
+                    // Authenticate user for real-time features
+                    this.socket.emit('authenticate', {
+                        userId: '<%= user.username %>',
+                        role: 'owner'
+                    });
+                });
+                
+                this.socket.on('disconnect', () => {
+                    this.isConnected = false;
+                    this.updateConnectionStatus('disconnected', 'Connection Lost');
+                    this.handleReconnection();
+                });
+                
+                this.socket.on('orderUpdated', (data) => {
+                    console.log('Order updated via real-time:', data);
+                    this.handleOrderUpdate(data);
+                });
+                
+                this.socket.on('newOrderNotification', (data) => {
+                    console.log('New order notification:', data);
+                    this.showNotification(`New order: ${data.orderNumber}`, 'success');
+                });
+                
+                this.socket.on('error', (error) => {
+                    console.error('Socket error:', error);
+                    this.showNotification('Connection error occurred', 'error');
+                });
+                
+            } catch (error) {
+                console.error('Failed to initialize socket:', error);
+                this.handleReconnection();
+            }
+        }
+        
+        handleReconnection() {
+            if (this.retryCount < this.maxRetries) {
+                this.retryCount++;
+                const delay = this.retryDelay * Math.pow(2, this.retryCount - 1); // Exponential backoff
+                
+                console.log(`Attempting to reconnect in ${delay}ms (attempt ${this.retryCount}/${this.maxRetries})`);
+                
+                setTimeout(() => {
+                    this.connectSocket();
+                }, delay);
+            } else {
+                console.error('Max reconnection attempts reached. Falling back to polling only.');
+                // this.showNotification('Real-time connection failed. Using polling mode.', 'warning');
+            }
+        }
+        
+        startPolling() {
+            // Polling as fallback for real-time updates
+            this.pollingInterval = setInterval(() => {
+                if (!this.isConnected) {
+                    this.updateConnectionStatus('polling', 'Polling Mode');
+                    this.loadOrders();
+                }
+            }, this.pollingIntervalMs);
+        }
+        
+        setupEventListeners() {
+            // Update when page becomes visible
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden) {
+                    this.loadOrders();
+                }
+            });
+            
+            // Update when window gains focus
+            window.addEventListener('focus', () => {
+                this.loadOrders();
+            });
+            
+            // Cleanup on page unload
+            window.addEventListener('beforeunload', () => {
+                this.cleanup();
+            });
+        }
+        
+        handleOrderUpdate(data) {
+            const orderElement = document.querySelector(`[data-order-id="${data.orderId}"]`);
+            if (orderElement) {
+                const statusElement = orderElement.querySelector('.order-status');
+                if (statusElement) {
+                    statusElement.textContent = data.status.charAt(0).toUpperCase() + data.status.slice(1);
+                    statusElement.className = `order-status ${data.status.toLowerCase()}`;
+                }
+                
+                this.showNotification(`Order ${data.orderNumber} status updated to ${data.status}`, 'info');
+            } else {
+                // Order not in current view, refresh the list
+                this.loadOrders();
+            }
+        }
+        
+        showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span class="notification-message">${message}</span>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+            
+            // Add to page
+            document.body.appendChild(notification);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+        
+        updateConnectionStatus(status, text) {
+            const statusElement = document.getElementById('connectionStatus');
+            const textElement = document.getElementById('connectionText');
+            
+            if (statusElement && textElement) {
+                statusElement.className = `connection-status ${status}`;
+                textElement.textContent = text;
+            }
+        }
+        
+        cleanup() {
+            if (this.socket) {
+                this.socket.disconnect();
+            }
+            if (this.pollingInterval) {
+                clearInterval(this.pollingInterval);
+            }
+        }
+    }
+    
+    // Initialize real-time manager
+    const realTimeManager = new RealTimeOrderManager();
+    
+    // Function to load user orders
+    async function loadOrders() {
+        try {
+            console.log('Loading orders...');
+            const response = await fetch('/orders');
+            console.log('Response status:', response.status);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            console.log('Fetched data:', data);
+            
+            const ordersList = document.getElementById('ordersList');
+            if (!ordersList) {
+                console.error('ordersList element not found!');
+                return;
+            }
+            
+            if (data.success) {
+                ordersList.innerHTML = '';
+                if (!data.orders || data.orders.length === 0) {
+                    ordersList.innerHTML = '<p class="no-data">No orders found</p>';
+                    console.log('No orders found');
+                    return;
+                }
+                
+                console.log('Processing orders:', data.orders.length);
+                data.orders.forEach((order, index) => {
+                    console.log(`Processing order ${index + 1}:`, order);
+                    const orderElement = document.createElement('div');
+                    orderElement.className = 'order-card';
+                    orderElement.setAttribute('data-order-id', order._id);
+                    orderElement.innerHTML = `
+                        <div class="order-header">
+                            <div class="order-info">
+                                <h3>Order #${order.orderNumber || order._id}</h3>
+                                <p class="order-date">${new Date(order.createdAt).toLocaleDateString()}</p>
+                            </div>
+                            <div class="order-status ${order.status.toLowerCase()}">
+                                ${order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                            </div>
+                        </div>
+                        <div class="order-items">
+                            ${order.items.map(item => {
+                                console.log('Order item:', item);
+                                
+                                // Handle null product case
+                                if (!item.product) {
+                                    return `
+                                        <div class="order-item">
+                                            <img src="/images/default-product.jpg" alt="Product Unavailable" class="order-item-image">
+                                            <div class="order-item-details">
+                                                <h4 style="color: #666;">Product No Longer Available</h4>
+                                                <p style="color: #999; font-size: 0.9em;">This product has been removed from our catalog</p>
+                                                <p>Quantity: ${item.quantity}</p>
+                                                <p>Price: ₹${item.price.toLocaleString()}</p>
+                                            </div>
+                                        </div>
+                                    `;
+                                }
+                                
+                                const productName = item.product.name;
+                                
+                                // Handle different image formats
+                                let productImage = '/images/default-product.jpg';
+                                if (item.product.images && item.product.images.length > 0) {
+                                    const img = item.product.images[0];
+                                    if (img.url) {
+                                        productImage = img.url;
+                                    } else if (img.data && img.contentType) {
+                                        // Convert buffer to base64
+                                        let base64;
+                                        if (typeof img.data === 'string') {
+                                            base64 = img.data;
+                                        } else if (img.data.buffer) {
+                                            base64 = Buffer.from(img.data.buffer).toString('base64');
+                                        } else if (Buffer.isBuffer(img.data)) {
+                                            base64 = img.data.toString('base64');
+                                        }
+                                        productImage = `data:${img.contentType};base64,${base64}`;
+                                    }
+                                } else if (item.product.image_url) {
+                                    productImage = item.product.image_url;
+                                }
+                                
+                                return `
+                                    <div class="order-item">
+                                        <img src="${productImage}" alt="${productName}" class="order-item-image">
+                                        <div class="order-item-details">
+                                            <h4>${productName}</h4>
+                                            <p>Quantity: ${item.quantity}</p>
+                                            <p>Price: ₹${item.price.toLocaleString()}</p>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                        <div class="order-footer">
+                            <div class="order-total">
+                                <span>Total Amount:</span>
+                                <span>₹${order.totalAmount.toLocaleString()}</span>
+                            </div>
+                            <div class="order-actions">
+                                <button class="btn btn-secondary" onclick="viewOrderDetails('${order._id}')">View Details</button>
+                            </div>
+                        </div>
+                    `;
+                    ordersList.appendChild(orderElement);
+                });
+                console.log('Orders loaded successfully');
+            } else {
+                console.error('Failed to load orders:', data.message);
+                ordersList.innerHTML = '<p class="error">Failed to load orders: ' + (data.message || 'Unknown error') + '</p>';
+            }
+        } catch (error) {
+            console.error('Error loading orders:', error);
+            const ordersList = document.getElementById('ordersList');
+            if (ordersList) {
+                ordersList.innerHTML = '<p class="error">Error loading orders. Please refresh the page.</p>';
+            }
+        }
+    }
+
+    // Function to view order details
+    function viewOrderDetails(orderId) {
+        // Implement order details view logic
+        window.location.href = `/order-details/${orderId}`;
+    }
+
+    // Load orders when the orders section is active
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM Content Loaded');
+        const ordersSection = document.getElementById('orders-section');
+        const ordersList = document.getElementById('ordersList');
+        
+        console.log('Orders section found:', !!ordersSection);
+        console.log('Orders list found:', !!ordersList);
+        
+        if (ordersSection && ordersList) {
+            console.log('Loading orders...');
+            loadOrders();
+        } else {
+            console.error('Required elements not found!');
+            if (!ordersSection) console.error('orders-section element not found');
+            if (!ordersList) console.error('ordersList element not found');
+        }
+    });
+
+    // Wishlist functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add to Cart from wishlist
+        const addToCartBtns = document.querySelectorAll('.wishlist-add-to-cart');
+        addToCartBtns.forEach(btn => {
+            btn.addEventListener('click', async function(e) {
+                e.preventDefault();
+                const productId = this.getAttribute('data-product-id');
+                
+                if (!productId) return;
+                
+                try {
+                    this.disabled = true;
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Adding...';
+                    
+                    const response = await fetch('/cart/add', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ productId, quantity: 1 })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.innerHTML = '<i class="fa fa-check"></i> Added!';
+                        this.style.background = '#4CAF50';
+                        setTimeout(() => {
+                            this.disabled = false;
+                            this.innerHTML = originalText;
+                            this.style.background = '';
+                        }, 2000);
+                    } else {
+                        throw new Error(data.message || 'Failed to add to cart');
+                    }
+                } catch (error) {
+                    console.error('Error adding to cart:', error);
+                    this.innerHTML = '<i class="fa fa-times"></i> Failed';
+                    this.style.background = '#dc3545';
+                    setTimeout(() => {
+                        this.disabled = false;
+                        this.innerHTML = 'Add to Cart';
+                        this.style.background = '';
+                    }, 2000);
+                }
+            });
+        });
+
+        // Remove product from wishlist
+        const removeProductBtns = document.querySelectorAll('.wishlist-remove-btn');
+        removeProductBtns.forEach(btn => {
+            btn.addEventListener('click', async function(e) {
+                e.preventDefault();
+                const productId = this.getAttribute('data-product-id');
+                
+                if (!productId || !confirm('Remove this product from your wishlist?')) return;
+                
+                try {
+                    const response = await fetch(`/wishlist/product/${productId}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        // Remove the card from DOM
+                        this.closest('.product-card').remove();
+                        
+                        // Check if wishlist is empty
+                        const remainingCards = document.querySelectorAll('.products-grid .product-card');
+                        if (remainingCards.length === 0) {
+                            document.querySelector('.products-grid').innerHTML = `
+                                <div class="empty-state" style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: #999;">
+                                    <i class="fas fa-heart-broken" style="font-size: 4rem; margin-bottom: 1rem; color: #ddd;"></i>
+                                    <p style="font-size: 1.1rem;">No items in your wishlist yet.</p>
+                                </div>
+                            `;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error removing from wishlist:', error);
+                    alert('Failed to remove from wishlist');
+                }
+            });
+        });
+
+        // Remove pet from wishlist
+        const removePetBtns = document.querySelectorAll('.wishlist-remove-pet-btn');
+        removePetBtns.forEach(btn => {
+            btn.addEventListener('click', async function(e) {
+                e.preventDefault();
+                const petId = this.getAttribute('data-pet-id');
+                
+                if (!petId || !confirm('Remove this pet from your wishlist?')) return;
+                
+                try {
+                    const response = await fetch(`/wishlist/pet/${petId}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        // Remove the card from DOM
+                        this.closest('.product-card').remove();
+                        
+                        // Check if wishlist is empty
+                        const remainingCards = document.querySelectorAll('.products-grid .product-card');
+                        if (remainingCards.length === 0) {
+                            document.querySelector('.products-grid').innerHTML = `
+                                <div class="empty-state" style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: #999;">
+                                    <i class="fas fa-heart-broken" style="font-size: 4rem; margin-bottom: 1rem; color: #ddd;"></i>
+                                    <p style="font-size: 1.1rem;">No items in your wishlist yet.</p>
+                                </div>
+                            `;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error removing from wishlist:', error);
+                    alert('Failed to remove from wishlist');
+                }
+            });
+        });
+    });
+    </script>
+
+    <!-- Real-time connection status indicator -->
+    <!-- <div id="connectionStatus" class="connection-status disconnected">
+        <span id="connectionText">Connecting...</span>
+    </div> -->
+</body>
+
+</html>
